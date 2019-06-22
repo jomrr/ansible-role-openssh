@@ -1,0 +1,181 @@
+{{ ansible_managed | comment }}
+# This is the sshd server system-wide configuration file.  See
+# sshd_config(5) for more information.
+
+# Connection and system settings ---------------------------------------------
+Port {{ sshd_port | default('22', true) }}
+AddressFamily {{ sshd_address_family, default('any', true) }}
+
+# IPv4 ListenAdresses
+{%- for address_v4 in sshd_listen_addr_v4 | default(['0.0.0.0'], true) %}}
+ListenAddress {{ address_v4 }}
+{%- endfor %}}
+
+# IPv6 ListenAdresses
+{%- for address_v6 in sshd_listen_addr_v6 | default(['::'], true) %}}
+ListenAddress {{ address_v6 }}
+{%- endfor %}
+
+{%- rsa_key = '/etc/ssh/ssh_host_rsa_key' %}
+{%- ed25519_key = '/etc/ssh/ssh_host_rsa_key' %}
+{%- for hostkey in sshd_host_keys | default([rsa_key,ed25519_key]) %}}
+HostKey {{ hostkey.value }}
+{%- endfor %}
+
+# Ciphers and Keying ---------------------------------------------------------
+RekeyLimit {{ sshd_rekey_limit | default('default none', true) }}
+{%- if sshd_ciphers is defined %}
+Ciphers {{ sshd_ciphers }}
+{%- endif %}
+{%- if sshd_kexs is defined %}
+KexAlgorithms {{ sshd_kexs }}
+{%- endif %}
+{%- if sshd_macs is defined %}
+MACs {{ sshd_macs }}
+{%- endif %}
+
+# Logging --------------------------------------------------------------------
+SyslogFacility AUTH
+LogLevel INFO
+
+# Authentication Methods -----------------------------------------------------
+AuthenticationMethods {{ sshd_authentication_methods | default('any',true) }}
+
+# Key baesd Authentication ---------------------------------------------------
+LoginGraceTime {{ sshd_login_grace_time | default('120', true) }}
+PermitRootLogin {{ sshd_permit_root_login | default('no', true) }}
+StrictModes yes
+MaxAuthTries {{ sshd_max_auth_tries | default('6', true) }}
+MaxSessions {{ sshd_max_sessions | default('10', true) }}
+
+PubkeyAuthentication {{ sshd_pubkey_auth | default('yes', true) }}
+
+# Expect .ssh/authorized_keys2 to be disregarded by default in future.
+{%- ak_file = '%h/.ssh/authorized_keys' %}
+AuthorizedKeysFile	{{ sshd_authorized_keys_file | default('ak_file', true) }}
+AuthorizedPrincipalsFile none
+AuthorizedKeysCommand none
+AuthorizedKeysCommandUser nobody
+
+# Host based Authentication --------------------------------------------------
+# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+HostbasedAuthentication {{ sshd_hostbased_auth | default('no', true) }}
+# Change to yes if you don't trust ~/.ssh/known_hosts for
+# HostbasedAuthentication
+IgnoreUserKnownHosts {{ sshd_ignore_user_known_hosts | default('yes', true) }}
+# Don't read the user's ~/.rhosts and ~/.shosts files
+IgnoreRhosts {{ sshd_ignore_rhosts | default('yes', true) }}
+# HostbasedAcceptedKeyTypes
+# HostbasedUsesNameFromPacketOnly
+# HostKey
+# HostKeyAlgorithms
+
+# Password Authentication ----------------------------------------------------
+# To disable tunneled clear text passwords, change to no here!
+PasswordAuthentication {{ sshd_password_auth | default('yes', true) }}
+# This should never be enabled
+PermitEmptyPasswords no
+
+# Change to yes to enable challenge-response passwords (beware issues with
+# some PAM modules and threads)
+ChallengeResponseAuthentication {{ sshd_challenge_auth | default('no', true) }}
+
+# Kerberos Authentication ----------------------------------------------------
+KerberosAuthentication no
+KerberosOrLocalPasswd yes
+KerberosTicketCleanup yes
+KerberosGetAFSToken no
+
+# GSSAPI Authentication ------------------------------------------------------
+GSSAPIAuthentication no
+GSSAPICleanupCredentials yes
+GSSAPIStrictAcceptorCheck yes
+GSSAPIKeyExchange no
+
+# PAM Authentication ---------------------------------------------------------
+# Set this to 'yes' to enable PAM authentication, account processing,
+# and session processing. If this is enabled, PAM authentication will
+# be allowed through the ChallengeResponseAuthentication and
+# PasswordAuthentication.  Depending on your PAM configuration,
+# PAM authentication via ChallengeResponseAuthentication may bypass
+# the setting of "PermitRootLogin without-password".
+# If you just want the PAM account and session checks to run without
+# PAM authentication, then enable this but set PasswordAuthentication
+# and ChallengeResponseAuthentication to 'no'.
+UsePAM {{ sshd_use_pam | default('yes', true) }}
+
+# Misc Settings --------------------------------------------------------------
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+GatewayPorts no
+X11Forwarding no
+X11DisplayOffset 10
+X11UseLocalhost yes
+PermitTTY yes
+PrintMotd no
+PrintLastLog yes
+TCPKeepAlive yes
+UseLogin no
+UsePrivilegeSeparation sandbox
+PermitUserEnvironment no
+Compression yes
+ClientAliveInterval 0
+ClientAliveCountMax 3
+UseDNS {{ sshd_use_dns | default('no', true) }}
+PidFile /var/run/sshd.pid
+MaxStartups 10:30:60
+PermitTunnel no
+ChrootDirectory none
+VersionAddendum none
+
+# No default banner path
+Banner none
+
+# Allow client to pass locale environment variables
+# PermitUserEnvironment must be yes to support this
+AcceptEnv LANG LC_*
+
+# override default of no subsystems
+Subsystem	sftp	/usr/lib/openssh/sftp-server
+{%- if sshd_deny_users is defined 
+    or sshd_allow_users is defined 
+    or sshd_deny_groups is defined
+    or sshd_allow_groups is defined %}
+
+# Allow/Deny Directives ------------------------------------------------------
+# The allow/deny directives	are processed in the following
+# order: DenyUsers, AllowUsers, DenyGroups, and finally AllowGroups
+{%- if sshd_deny_users is defined %}
+DenyUsers {{ sshd_deny_users | join(' ') }}
+{%- endif %}
+{%- if sshd_allow_users is defined %}
+DenyUsers {{ sshd_allow_users | join(' ') }}
+{%- endif %}
+{%- if sshd_deny_groups is defined %}
+DenyUsers {{ sshd_deny_groups | join(' ') }}
+{%- endif %}
+{%- if sshd_allow_groups is defined %}
+DenyUsers {{ sshd_allow_groups | join(' ') }}
+{%- endif %}
+{%- endif %}
+{%- if sshd_per_group_settings is defined %}
+
+# Per Group Settings ---------------------------------------------------------
+{%- for group in sshd_per_group_settings %}
+Match User {{ group.key }}
+    {%- for group_setting in group.value %}
+    {{ group_setting.key }} {{ group_setting.value }}
+    {%- endfor %}
+{%- endfor %}
+
+{%- endif %}
+{%- if sshd_per_user_settings is defined %}
+
+# Per User Settings ----------------------------------------------------------
+{%- for user in sshd_per_user_settings %}
+Match User {{ user.key }}
+    {%- for user_setting in user.value %}
+    {{ user_setting.key }} {{ user_setting.value }}
+    {%- endfor %}
+{%- endfor %}
+{%- endif %}

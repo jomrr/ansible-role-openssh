@@ -1,0 +1,6 @@
+---
+# role: ansible-role-ssh
+# file: defaults/main/ssh.yml
+
+# write default ssh client configuration to /etc/ssh/ssh_conf
+ssh_conf_enabled: false
