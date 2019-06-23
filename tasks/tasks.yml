@@ -1,5 +1,4 @@
 ---
-
 # role: ansible-role-ssh
 # file: tasks/tasks.yml
 
@@ -17,10 +16,19 @@
   loop_control:
     loop_var: vars_file
 
-- name: Determine ssh version
-  shell: set -o pipefail && ssh -V 2>&1 | sed -r "s/.*_([0-9.]*).*\s{1}.*/\1/"
-  args:
-    executable: /bin/bash
-  changed_when: false
-  register: ssh_version
-  check_mode: yes
+- name: Include tasks for setting version related algorithm facts
+  include_tasks: version.yml
+
+- name: Include tasks for setting up ssh
+  include_tasks: ssh.yml
+  when: ssh_enabled | bool
+    or sshd_enabled | bool
+
+- name: Include tasks for setting up sshd
+  include_tasks: sshd.yml
+  when: sshd_enabled | bool
+
+- name: Enable/Disable sshd according to sshd_enabled
+  service:
+    name: "{{ sshd_service_name }}"
+    enabled: "{{ sshd_enabled | bool }}"

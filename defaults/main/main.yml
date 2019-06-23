@@ -4,67 +4,37 @@
 
 # The role is disabled by default, so you do not get in trouble.
 # Checked in tasks/main.yml which includes tasks.yml if enabled.
-role_ssh_enabled: false
+role_ssh_enabled: False
 
-# you should not use a version below 6.7, if you want, just add ...
+# algorithms considered to be usable and secure.
+# this list is used to filter the available algorithms on the
+# target machine via intersect.
+# you can extend it or i.e. remove elliptic curce algorithms
+# by defining the dict ssh_algorithms as host or group var.
 ssh_algorithms:
-  6.7:
-    cipher:
-      - chacha20-poly1305@openssh.com
-      - aes256-gcm@openssh.com
-      - aes128-gcm@openssh.com
-      - aes256-ctr
-      - aes192-ctr
-      - aes128-ctr
-    kex:
-      - curve25519-sha256@libssh.org
-      - diffie-hellman-group-exchange-sha256
-    mac:
-      - hmac-sha2-512-etm@openssh.com
-      - hmac-sha2-256-etm@openssh.com
-      - umac-128-etm@openssh.com
-      - hmac-sha2-512
-      - hmac-sha2-256
-  7.4:
-    cipher:
-      - chacha20-poly1305@openssh.com
-      - aes256-gcm@openssh.com
-      - aes128-gcm@openssh.com
-      - aes256-ctr
-      - aes192-ctr
-      - aes128-ctr
-    kex:
-      - curve25519-sha256@libssh.org
-      - curve25519-sha256
-      - diffie-hellman-group18-sha512
-      - diffie-hellman-group16-sha512
-      - diffie-hellman-group14-sha256
-      - diffie-hellman-group-exchange-sha256
-    mac:
-      - hmac-sha2-512-etm@openssh.com
-      - hmac-sha2-256-etm@openssh.com
-      - umac-128-etm@openssh.com
-      - hmac-sha2-512
-      - hmac-sha2-256
-  8.0:
-    cipher:
-      - chacha20-poly1305@openssh.com
-      - aes256-gcm@openssh.com
-      - aes128-gcm@openssh.com
-      - aes256-ctr
-      - aes192-ctr
-      - aes128-ctr
-    kex:
-      - sntrup4591761x25519-sha512@tinyssh.org
-      - curve25519-sha256@libssh.org
-      - curve25519-sha256
-      - diffie-hellman-group18-sha512
-      - diffie-hellman-group16-sha512
-      - diffie-hellman-group14-sha256
-      - diffie-hellman-group-exchange-sha256
-    mac:
-      - hmac-sha2-512-etm@openssh.com
-      - hmac-sha2-256-etm@openssh.com
-      - umac-128-etm@openssh.com
-      - hmac-sha2-512
-      - hmac-sha2-256
+  ciphers:
+    - chacha20-poly1305@openssh.com
+    - aes256-gcm@openssh.com
+    - aes128-gcm@openssh.com
+    - aes256-ctr
+    - aes192-ctr
+    - aes128-ctr
+  kexs:
+    - sntrup4591761x25519-sha512@tinyssh.org
+    - curve25519-sha256@libssh.org
+    - curve25519-sha256
+    - diffie-hellman-group18-sha512
+    - diffie-hellman-group16-sha512
+    - diffie-hellman-group14-sha256
+    - diffie-hellman-group-exchange-sha256
+  hostkeys:
+    - ssh-ed25519-cert-v01@openssh.com
+    - ssh-ed25519
+    - ssh-rsa-cert-v01@openssh.com
+    - ssh-rsa
+  macs:
+    - hmac-sha2-512-etm@openssh.com
+    - hmac-sha2-256-etm@openssh.com
+    - umac-128-etm@openssh.com
+    - hmac-sha2-512
+    - hmac-sha2-256

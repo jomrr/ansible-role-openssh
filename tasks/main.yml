@@ -1,5 +1,4 @@
 ---
-
 # role: ansible-role-ssh
 # file: tasks/main.yml
 

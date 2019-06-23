@@ -16,29 +16,46 @@
 # list of available options, their meanings and defaults, please see the
 # ssh_config(5) man page.
 
-# Host *
-#   ForwardAgent no
-#   ForwardX11 no
-#   PasswordAuthentication yes
-#   HostbasedAuthentication no
-#   GSSAPIAuthentication no
-#   GSSAPIDelegateCredentials no
-#   BatchMode no
-#   CheckHostIP yes
-#   AddressFamily any
-#   ConnectTimeout 0
-#   StrictHostKeyChecking ask
-#   IdentityFile ~/.ssh/id_rsa
-#   IdentityFile ~/.ssh/id_dsa
-#   IdentityFile ~/.ssh/id_ecdsa
-#   IdentityFile ~/.ssh/id_ed25519
-#   Port 22
-#   Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc
-#   MACs hmac-md5,hmac-sha1,umac-64@openssh.com
-#   EscapeChar ~
-#   Tunnel no
-#   TunnelDevice any:any
-#   PermitLocalCommand no
-#   VisualHostKey no
-#   ProxyCommand ssh -q -W %h:%p gateway.example.com
-#   RekeyLimit 1G 1h
+# Host specific settings -----------------------------------------------------
+
+# General host settings ------------------------------------------------------
+Host *
+AddressFamily {{ ssh_address_family }}
+BatchMode no
+CheckHostIP yes
+{% if ssh_ciphers is defined %}
+Ciphers {{ ssh_ciphers }}
+{% endif %}
+ConnectionAttempts 1
+ConnectTimeout 0
+EnableSSHKeysign no
+EscapeChar ~
+ForwardAgent no
+ForwardX11 no
+GSSAPIAuthentication no
+GSSAPIDelegateCredentials no
+GSSAPIKeyExchange no
+GSSAPITrustDns no
+HashKnownHosts yes
+HostbasedAuthentication no
+{% if ssh_keys is defined %}
+HostKeyAlgorithms {{ ssh_keys }}
+{% endif %}
+{% for idfile in ssh_identity_files %}
+IdentityFile {{ idfile }}
+{% endfor %}
+{% if ssh_kexs is defined %}
+KexAlgorithms {{ ssh_kexs }}
+{% endif %}
+{% if ssh_macs is defined %}
+MACs {{ ssh_macs }}
+{% endif -%} 
+PasswordAuthentication yes
+PermitLocalCommand no
+Port {{ ssh_port }}
+Protocol 2
+RekeyLimit {{ ssh_rekey_limit }}
+StrictHostKeyChecking ask
+Tunnel no
+VerifyHostKeyDNS no
+VisualHostKey yes

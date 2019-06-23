@@ -1,0 +1,68 @@
+---
+# role: ansible-role-ssh
+# file: tasks/version.yml
+
+- name: Determine ssh available ciphers
+  shell: set -o pipefail && ssh -Q cipher 2>&1
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_ciphers
+  check_mode: no
+
+- name: Set fact ssh_available_ciphers
+  set_fact:
+    ssh_available_ciphers: "{{ ssh_gather_ciphers.stdout.split('\n') }}"
+
+- name: Determine ssh available kexs
+  shell: set -o pipefail && ssh -Q kex 2>&1
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_kexs
+  check_mode: no
+
+- name: Set fact ssh_available_kexs
+  set_fact:
+    ssh_available_kexs: "{{ ssh_gather_kexs.stdout.split('\n') }}"
+
+- name: Determine ssh available keys
+  shell: set -o pipefail && ssh -Q key 2>&1
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_keys
+  check_mode: no
+
+- name: Set fact ssh_available_keys
+  set_fact:
+    ssh_available_keys: "{{ ssh_gather_keys.stdout.split('\n') }}"
+
+- name: Determine ssh available macs
+  shell: set -o pipefail && ssh -Q mac 2>&1
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_macs
+  check_mode: no
+
+- name: Set fact ssh_available_macs
+  set_fact:
+    ssh_available_macs: "{{ ssh_gather_macs.stdout.split('\n') }}"
+
+- name: Set fact ssh_ciphers (ssh_algorithms.ciphers | intersect(ssh_available_ciphers))
+  set_fact:
+    ssh_ciphers: "{{ ssh_algorithms.ciphers | intersect(ssh_available_ciphers) | join(',')}}"
+
+- name: Set fact ssh_kexs (ssh_algorithms.kexs | intersect(ssh_available_kexs))
+  set_fact:
+    ssh_kexs: "{{ ssh_algorithms.kexs | intersect(ssh_available_kexs) | join(',')}}"
+
+- name: Set fact ssh_keys (ssh_algorithms.keys | intersect(ssh_available_keys))
+  set_fact:
+    ssh_keys: "{{ ssh_algorithms.hostkeys | intersect(ssh_available_keys) | join(',')}}"
+
+- name: Set fact ssh_macs (ssh_algorithms.macs | intersect(ssh_available_macs))
+  set_fact:
+    ssh_macs: "{{ ssh_algorithms.macs | intersect(ssh_available_macs) | join(',')}}"
+   
