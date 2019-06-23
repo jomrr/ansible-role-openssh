@@ -11,20 +11,30 @@ lint:
   options:
     config-file: molecule/shared/yamllint.yml
 platforms:
+  - name: ssh-alpine37
+    image: "alpine:3.7"
+  - name: ssh-alpine38
+    image: "alpine:3.8"
   - name: ssh-alpine39
     image: "alpine:3.9"
   - name: ssh-amazon2
-    image: "amazonlinux:2"
+    image: "jam82/amazon-molecule:2"
   - name: ssh-arch
-    image: "archlinux/base"
+    image: "jam82/arch-molecule"
+  - name: ssh-centos6
+    image: "jam82/centos-molecule:6"
   - name: ssh-centos7
-    image: "centos:centos7"
+    image: "jam82/centos-molecule:7"
+  - name: ssh-debian8
+    image: "debian:jessie"
   - name: ssh-debian9
     image: "debian:stretch"
   - name: ssh-opensuse-leap
     image: "opensuse:leap"
   - name: ssh-oracle7
     image: "oraclelinux:7"
+  - name: ssh-ubuntu1604
+    image: "ubuntu:16.04"
   - name: ssh-ubuntu1804
     image: "ubuntu:18.04"
 provisioner:
@@ -38,6 +48,7 @@ provisioner:
     group_vars:
       all:
         role_ssh_enabled: true
+        sshd_listen_addr_v4: ['0.0.0.0']
 scenario:
   name: default
 verifier:

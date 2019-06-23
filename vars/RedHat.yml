@@ -3,7 +3,7 @@
 # file: vars/RedHat.yml
 
 ssh_packages:
-  - openssh
+  - openssh-clients
 
 sshd_packages:
   - openssh-server

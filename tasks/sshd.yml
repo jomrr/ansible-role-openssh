@@ -2,14 +2,6 @@
 # role: ansible-role-ssh
 # file: tasks/sshd.yml
 
-- name: Install ssh server packages
-  package:
-    name: "{{ sshd_package }}"
-    state: present
-  loop: "{{ sshd_packages }}"
-  loop_control:
-    loop_var: sshd_package
-
 - name: debug rekey_limit
   debug:
     msg: "{{ sshd_rekey_limit }}"
@@ -24,3 +16,6 @@
     backup: 'yes'
     validate: '/usr/sbin/sshd -T -C user=root -C host=localhost -C addr=localhost -f %s'
   notify: restart sshd
+
+# - name: Create ssh host keys (if non-existend or when forced)
+#   shell: 

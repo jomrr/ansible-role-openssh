@@ -13,7 +13,7 @@ sshd_address_family: 'inet'
 
 # list of ipv4 addresses to listen on
 # per default, we listen on the default address only.
-# to listen on any ipv4, please set: 
+# to listen on any ipv4, please set:
 # sshd_listen_addresses_v4: ['0.0.0.0']
 # manual check of default address, which is your default route:
 # ansible all -m setup -a "filter=ansible_default_ipv4.address"
@@ -25,16 +25,18 @@ sshd_listen_addr_v6: []
 
 # force renewal of ssh host keys
 # attenation: existing known_hosts entries become invalid
-sshd_host_key_regenerate: false
+sshd_host_key_regenerate: False
 
 # ssh host keys
 # every key not in the list, will be deleted
-# even if sshd_host_key_regenerate = false
-# if you want ecdsa add: 
+# even if sshd_host_key_regenerate = False
+# if you want ecdsa add:
 # ecdsa: ssh_host_ecdsa_key
 sshd_host_keys:
-  - '/etc/ssh/ssh_host_rsa_key'
-  - '/etc/ssh/ssh_host_ed25519_key'
+  - type: rsa
+    path: '/etc/ssh/ssh_host_rsa_key'
+  - type: ed25519
+    path: '/etc/ssh/ssh_host_ed25519_key'
 
 # available authentication methods
 # sshd_authentication_methods:
@@ -48,7 +50,7 @@ sshd_rekey_limit: '128M 1800'
 # time to disconnect client if no successful authentication
 sshd_login_grace_time: '60'
 
-# permit root login, 
+# permit root login,
 # values are yes, prohibit-password, forced-commands-only, or no
 sshd_permit_root_login: 'no'
 
@@ -83,7 +85,7 @@ sshd_challenge_auth: 'no'
 # enable pam authentication
 sshd_use_pam: 'yes'
 
-# use dns verification 
+# use dns verification
 sshd_use_dns: 'no'
 
 # deny ssh login for listed users
@@ -102,10 +104,6 @@ sshd_allow_groups: []
 sshd_per_group_settings: {}
 
 # user specific settings defined via Match User
-# Match User myuser
-#	 X11Forwarding yes
-#	 AllowTcpForwarding yes
-# would be:
 # sshd_per_user_settings:
 #   myuser:
 #     X11Forwarding: yes

@@ -24,7 +24,7 @@ ListenAddress {{ address_v6 }}
 {% if (sshd_host_keys | length) > 0 %}
 # SSH Host Keys
 {% for hostkey in sshd_host_keys %}
-HostKey {{ hostkey }}
+HostKey {{ hostkey.path }}
 {% endfor %}
 
 {% endif %}

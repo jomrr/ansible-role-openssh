@@ -1,0 +1,20 @@
+---
+
+- name: Install ssh client packages
+  package:
+    name: "{{ ssh_package }}"
+    state: present
+  loop: "{{ ssh_packages }}"
+  loop_control:
+    loop_var: ssh_package
+  when: ssh_enabled | bool
+    or sshd_enabled | bool
+
+- name: Install ssh server packages
+  package:
+    name: "{{ sshd_package }}"
+    state: present
+  loop: "{{ sshd_packages }}"
+  loop_control:
+    loop_var: sshd_package
+  when: sshd_enabled | bool

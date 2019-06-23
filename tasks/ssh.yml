@@ -2,14 +2,6 @@
 # role: ansible-role-ssh
 # file: tasks/ssh.yml
 
-- name: Install ssh client packages
-  package:
-    name: "{{ ssh_package }}"
-    state: present
-  loop: "{{ ssh_packages }}"
-  loop_control:
-    loop_var: ssh_package
-
 - name: Set up default configuration of ssh in /etc/ssh/ssh_config
   template:
     src: 'etc/ssh/ssh_config.j2'
