@@ -3,68 +3,73 @@
 # sshd_config(5) for more information.
 
 # Connection and system settings ---------------------------------------------
-Port {{ sshd_port | default('22', true) }}
-AddressFamily {{ sshd_address_family, default('any', true) }}
+Protocol 2
+Port {{ sshd_port }}
+AddressFamily {{ sshd_address_family }}
 
+{% if (sshd_listen_addr_v4 | length) > 0 %}
 # IPv4 ListenAdresses
-{%- for address_v4 in sshd_listen_addr_v4 | default(['0.0.0.0'], true) %}}
+{% for address_v4 in sshd_listen_addr_v4 %}
 ListenAddress {{ address_v4 }}
-{%- endfor %}}
+{% endfor %}
 
+{% endif %}
+{% if (sshd_listen_addr_v6 | length) > 0 %}
 # IPv6 ListenAdresses
-{%- for address_v6 in sshd_listen_addr_v6 | default(['::'], true) %}}
+{% for address_v6 in sshd_listen_addr_v6 %}}
 ListenAddress {{ address_v6 }}
-{%- endfor %}
+{% endfor %}
 
-{%- rsa_key = '/etc/ssh/ssh_host_rsa_key' %}
-{%- ed25519_key = '/etc/ssh/ssh_host_rsa_key' %}
-{%- for hostkey in sshd_host_keys | default([rsa_key,ed25519_key]) %}}
-HostKey {{ hostkey.value }}
-{%- endfor %}
+{% endif %}
+{% if (sshd_host_keys | length) > 0 %}
+# SSH Host Keys
+{% for hostkey in sshd_host_keys %}
+HostKey {{ hostkey }}
+{% endfor %}
 
+{% endif %}
 # Ciphers and Keying ---------------------------------------------------------
-RekeyLimit {{ sshd_rekey_limit | default('default none', true) }}
-{%- if sshd_ciphers is defined %}
-Ciphers {{ sshd_ciphers }}
-{%- endif %}
-{%- if sshd_kexs is defined %}
-KexAlgorithms {{ sshd_kexs }}
-{%- endif %}
-{%- if sshd_macs is defined %}
-MACs {{ sshd_macs }}
-{%- endif %}
+# RekeyLimit
+{% if ssh_ciphers is defined %}
+Ciphers {{ ssh_ciphers }}
+{% endif %}
+{% if ssh_kexs is defined %}
+KexAlgorithms {{ ssh_kexs }}
+{% endif %}
+{% if ssh_macs is defined %}
+MACs {{ ssh_macs }}
+{% endif %}
 
 # Logging --------------------------------------------------------------------
 SyslogFacility AUTH
 LogLevel INFO
 
 # Authentication Methods -----------------------------------------------------
-AuthenticationMethods {{ sshd_authentication_methods | default('any',true) }}
+# AuthenticationMethods gssapi-with-mic, hostbased, keyboard-interactive, password, publickey
 
 # Key baesd Authentication ---------------------------------------------------
-LoginGraceTime {{ sshd_login_grace_time | default('120', true) }}
-PermitRootLogin {{ sshd_permit_root_login | default('no', true) }}
+LoginGraceTime {{ sshd_login_grace_time }}
+PermitRootLogin {{ sshd_permit_root_login }}
 StrictModes yes
-MaxAuthTries {{ sshd_max_auth_tries | default('6', true) }}
-MaxSessions {{ sshd_max_sessions | default('10', true) }}
+MaxAuthTries {{ sshd_max_auth_tries }}
+MaxSessions {{ sshd_max_sessions }}
 
-PubkeyAuthentication {{ sshd_pubkey_auth | default('yes', true) }}
+PubkeyAuthentication {{ sshd_pubkey_auth }}
 
 # Expect .ssh/authorized_keys2 to be disregarded by default in future.
-{%- ak_file = '%h/.ssh/authorized_keys' %}
-AuthorizedKeysFile	{{ sshd_authorized_keys_file | default('ak_file', true) }}
+AuthorizedKeysFile {{ sshd_authorized_keys_file }}
 AuthorizedPrincipalsFile none
 AuthorizedKeysCommand none
 AuthorizedKeysCommandUser nobody
 
 # Host based Authentication --------------------------------------------------
 # For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
-HostbasedAuthentication {{ sshd_hostbased_auth | default('no', true) }}
+HostbasedAuthentication {{ sshd_hostbased_auth }}
 # Change to yes if you don't trust ~/.ssh/known_hosts for
 # HostbasedAuthentication
-IgnoreUserKnownHosts {{ sshd_ignore_user_known_hosts | default('yes', true) }}
+IgnoreUserKnownHosts {{ sshd_ignore_user_known_hosts }}
 # Don't read the user's ~/.rhosts and ~/.shosts files
-IgnoreRhosts {{ sshd_ignore_rhosts | default('yes', true) }}
+IgnoreRhosts {{ sshd_ignore_rhosts }}
 # HostbasedAcceptedKeyTypes
 # HostbasedUsesNameFromPacketOnly
 # HostKey
@@ -72,25 +77,24 @@ IgnoreRhosts {{ sshd_ignore_rhosts | default('yes', true) }}
 
 # Password Authentication ----------------------------------------------------
 # To disable tunneled clear text passwords, change to no here!
-PasswordAuthentication {{ sshd_password_auth | default('yes', true) }}
+PasswordAuthentication {{ sshd_password_auth }}
 # This should never be enabled
 PermitEmptyPasswords no
 
 # Change to yes to enable challenge-response passwords (beware issues with
 # some PAM modules and threads)
-ChallengeResponseAuthentication {{ sshd_challenge_auth | default('no', true) }}
+ChallengeResponseAuthentication {{ sshd_challenge_auth }}
 
 # Kerberos Authentication ----------------------------------------------------
 KerberosAuthentication no
 KerberosOrLocalPasswd yes
 KerberosTicketCleanup yes
-KerberosGetAFSToken no
 
 # GSSAPI Authentication ------------------------------------------------------
 GSSAPIAuthentication no
 GSSAPICleanupCredentials yes
 GSSAPIStrictAcceptorCheck yes
-GSSAPIKeyExchange no
+#GSSAPIKeyExchange no
 
 # PAM Authentication ---------------------------------------------------------
 # Set this to 'yes' to enable PAM authentication, account processing,
@@ -102,7 +106,7 @@ GSSAPIKeyExchange no
 # If you just want the PAM account and session checks to run without
 # PAM authentication, then enable this but set PasswordAuthentication
 # and ChallengeResponseAuthentication to 'no'.
-UsePAM {{ sshd_use_pam | default('yes', true) }}
+UsePAM {{ sshd_use_pam }}
 
 # Misc Settings --------------------------------------------------------------
 AllowAgentForwarding yes
@@ -115,13 +119,12 @@ PermitTTY yes
 PrintMotd no
 PrintLastLog yes
 TCPKeepAlive yes
-UseLogin no
-UsePrivilegeSeparation sandbox
+#UsePrivilegeSeparation sandbox
 PermitUserEnvironment no
 Compression yes
 ClientAliveInterval 0
 ClientAliveCountMax 3
-UseDNS {{ sshd_use_dns | default('no', true) }}
+UseDNS {{ sshd_use_dns }}
 PidFile /var/run/sshd.pid
 MaxStartups 10:30:60
 PermitTunnel no
@@ -137,45 +140,45 @@ AcceptEnv LANG LC_*
 
 # override default of no subsystems
 Subsystem	sftp	/usr/lib/openssh/sftp-server
-{%- if sshd_deny_users is defined 
-    or sshd_allow_users is defined 
-    or sshd_deny_groups is defined
-    or sshd_allow_groups is defined %}
+{% if  (sshd_deny_users   | length) > 0
+    or (sshd_allow_users  | length) > 0
+    or (sshd_deny_groups  | length) > 0
+    or (sshd_allow_groups | length) > 0 %}
 
 # Allow/Deny Directives ------------------------------------------------------
 # The allow/deny directives	are processed in the following
 # order: DenyUsers, AllowUsers, DenyGroups, and finally AllowGroups
-{%- if sshd_deny_users is defined %}
+{% endif %}
+{% if (sshd_deny_users | length) > 0 %}
 DenyUsers {{ sshd_deny_users | join(' ') }}
-{%- endif %}
-{%- if sshd_allow_users is defined %}
-DenyUsers {{ sshd_allow_users | join(' ') }}
-{%- endif %}
-{%- if sshd_deny_groups is defined %}
-DenyUsers {{ sshd_deny_groups | join(' ') }}
-{%- endif %}
-{%- if sshd_allow_groups is defined %}
-DenyUsers {{ sshd_allow_groups | join(' ') }}
-{%- endif %}
-{%- endif %}
-{%- if sshd_per_group_settings is defined %}
+{% endif %}
+{% if (sshd_allow_users | length) > 0 %}
+AllowUsers {{ sshd_allow_users | join(' ') }}
+{% endif %}
+{% if (sshd_deny_groups | length) > 0 %}
+DenyGroups {{ sshd_deny_groups | join(' ') }}
+{% endif %}
+{% if (sshd_allow_groups | length) > 0 %}
+AllowGroups {{ sshd_allow_groups | join(' ') }}
+{% endif %}
+{% if (sshd_per_group_settings | length) > 0 %}
 
 # Per Group Settings ---------------------------------------------------------
-{%- for group in sshd_per_group_settings %}
+{% for group in sshd_per_group_settings %}
 Match User {{ group.key }}
-    {%- for group_setting in group.value %}
+    {% for group_setting in group.value %}
     {{ group_setting.key }} {{ group_setting.value }}
-    {%- endfor %}
-{%- endfor %}
+    {% endfor %}
+{% endfor %}
 
-{%- endif %}
-{%- if sshd_per_user_settings is defined %}
+{% endif %}
+{% if (sshd_per_user_settings | length) > 0 %}
 
 # Per User Settings ----------------------------------------------------------
-{%- for user in sshd_per_user_settings %}
+{% for user in sshd_per_user_settings %}
 Match User {{ user.key }}
-    {%- for user_setting in user.value %}
+    {% for user_setting in user.value %}
     {{ user_setting.key }} {{ user_setting.value }}
-    {%- endfor %}
-{%- endfor %}
-{%- endif %}
+    {% endfor %}
+{% endfor %}
+{% endif %}

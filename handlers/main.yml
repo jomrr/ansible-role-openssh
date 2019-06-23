@@ -1,0 +1,8 @@
+---
+# role: ansible-role-ssh
+# file: handlers/main/main.yml
+
+- name: restart sshd
+  service:
+    name: "{{ sshd_service_name }}"
+    state: restarted

@@ -53,3 +53,5 @@ See LICENSE file in repository.
 - [Abe Singer - Hostbased SSH](https://www.usenix.org/system/files/login/articles/09_singer.pdf)
 - [DNS-based SSH host key verification](https://ayesh.me/sshfp-verification)
 - [Hardening SSH](https://medium.com/@jasonrigden/hardening-ssh-1bcb99cd4cef)
+- [How to create an SSH certificate authority](https://jameshfisher.com/2018/03/16/how-to-create-an-ssh-certificate-authority/)
+- [SSH Host Key Signing - ein unterschätztes Feature](https://www.sipgate.de/blog/ssh-host-key-signing-ein-unterschaetztes-feature)

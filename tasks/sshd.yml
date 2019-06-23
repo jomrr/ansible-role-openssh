@@ -1,0 +1,26 @@
+---
+# role: ansible-role-ssh
+# file: tasks/sshd.yml
+
+- name: Install ssh server packages
+  package:
+    name: "{{ sshd_package }}"
+    state: present
+  loop: "{{ sshd_packages }}"
+  loop_control:
+    loop_var: sshd_package
+
+- name: debug rekey_limit
+  debug:
+    msg: "{{ sshd_rekey_limit }}"
+
+- name: Set up sshd configuration in /etc/ssh/sshd_config
+  template:
+    src: 'etc/ssh/sshd_config.j2'
+    dest: '/etc/ssh/sshd_config'
+    mode: '0644'
+    owner: 'root'
+    group: 'root'
+    backup: 'yes'
+    validate: '/usr/sbin/sshd -T -C user=root -C host=localhost -C addr=localhost -f %s'
+  notify: restart sshd

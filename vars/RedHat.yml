@@ -1,3 +1,11 @@
 ---
 # role: ansible-role-ssh
 # file: vars/RedHat.yml
+
+ssh_packages:
+  - openssh
+
+sshd_packages:
+  - openssh-server
+
+sshd_service_name: sshd

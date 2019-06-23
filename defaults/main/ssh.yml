@@ -3,4 +3,18 @@
 # file: defaults/main/ssh.yml
 
 # write default ssh client configuration to /etc/ssh/ssh_conf
-ssh_conf_enabled: false
+ssh_enabled: True
+
+# port ssh will connect to by default
+ssh_port: 22
+
+# adress family, can be 'inet', 'inet6' or 'any'
+ssh_address_family: 'inet'
+
+ssh_identity_files:
+  - '~/.ssh/identity'
+  - '~/.ssh/id_rsa'
+  - '~/.ssh/id_ed25519'
+
+# renegotiate session key after 64M of data or 1800 seconds
+ssh_rekey_limit: '128M 1800'
