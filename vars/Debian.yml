@@ -4,6 +4,7 @@
 
 ssh_packages:
   - openssh-client
+  - binutils
 
 sshd_packages:
   - openssh-server

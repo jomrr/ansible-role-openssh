@@ -57,5 +57,9 @@ Protocol 2
 RekeyLimit {{ ssh_rekey_limit }}
 StrictHostKeyChecking ask
 Tunnel no
+{% if ssh_version | float is version('5.4', '>=') 
+  and ssh_version | float is version('7.1', '<=') %}
+UseRoaming no
+{% endif %}
 VerifyHostKeyDNS no
 VisualHostKey yes

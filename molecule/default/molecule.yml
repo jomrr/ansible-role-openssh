@@ -11,32 +11,56 @@ lint:
   options:
     config-file: molecule/shared/yamllint.yml
 platforms:
-  - name: ssh-alpine37
-    image: "alpine:3.7"
-  - name: ssh-alpine38
-    image: "alpine:3.8"
-  - name: ssh-alpine39
-    image: "alpine:3.9"
   - name: ssh-amazon2
     image: "jam82/amazon-molecule:2"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-arch
     image: "jam82/arch-molecule"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-centos6
     image: "jam82/centos-molecule:6"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-centos7
     image: "jam82/centos-molecule:7"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-debian8
     image: "debian:jessie"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-debian9
     image: "debian:stretch"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-opensuse-leap
     image: "opensuse:leap"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-oracle7
     image: "oraclelinux:7"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-ubuntu1604
     image: "ubuntu:16.04"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-ubuntu1804
     image: "ubuntu:18.04"
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
 provisioner:
   name: ansible
   log: true
