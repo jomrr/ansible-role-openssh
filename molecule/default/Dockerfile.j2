@@ -1,10 +1,10 @@
-# Molecule managed                                                                
-                                                                                  
-{% if item.registry is defined %}                                                 
-FROM {{ item.registry.url }}/{{ item.image }}                                     
-{% else %}                                                                        
-FROM {{ item.image }}                                                             
-{% endif %}                                                                       
+# Molecule managed
+
+{% if item.registry is defined %}
+FROM {{ item.registry.url }}/{{ item.image }}
+{% else %}
+FROM {{ item.image }}
+{% endif %}
 
 ENV container docker
 

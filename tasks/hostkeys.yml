@@ -6,11 +6,11 @@
   register: hostkey_file
 
 - name: Create ssh host keys
-  shell: "yes y | ssh-keygen -q -t {{ hostkey.type }} -N '' -f {{ hostkey.path }} >/dev/null"
+  shell: "set -o pipefail && yes y | ssh-keygen -q -t {{ hostkey.type }} -N '' -f {{ hostkey.path }} >/dev/null"
   args:
     executable: /bin/bash
   changed_when: False
   register: ssh_version
   check_mode: no
-  when: hostkey_file.stat.exists == False
+  when: not hostkey_file.stat.exists
     or (sshd_host_key_regenerate | bool)

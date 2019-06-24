@@ -49,7 +49,7 @@ KexAlgorithms {{ ssh_kexs }}
 {% endif %}
 {% if ssh_macs is defined %}
 MACs {{ ssh_macs }}
-{% endif -%} 
+{% endif -%}
 PasswordAuthentication yes
 PermitLocalCommand no
 Port {{ ssh_port }}
