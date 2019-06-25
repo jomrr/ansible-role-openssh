@@ -1,9 +1,12 @@
 ---
+# role: ansible-role-ssh
+# file: molecule/default/create.yml
+
 - name: Create
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ molecule_no_log }}"
+  no_log: false  # "{{ molecule_no_log }}"
   tasks:
     - name: Determine which docker image info module to use
       set_fact:

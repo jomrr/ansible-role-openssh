@@ -126,7 +126,6 @@ dmypy.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-
 # ---> Vim
 # Swap
 [._]*.s[a-v][a-z]

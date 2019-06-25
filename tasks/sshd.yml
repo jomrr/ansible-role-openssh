@@ -2,10 +2,10 @@
 # role: ansible-role-ssh
 # file: tasks/sshd.yml
 
-- name: Restart sshd
+- name: Start sshd
   service:
     name: "{{ sshd_service_name }}"
-    state: restarted
+    state: started
 
 - name: Set up sshd configuration in /etc/ssh/sshd_config
   template:

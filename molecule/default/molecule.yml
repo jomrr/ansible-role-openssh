@@ -11,14 +11,9 @@ lint:
   options:
     config-file: molecule/shared/yamllint.yml
 platforms:
-  # - name: ssh-amazon2
-  #   image: "jam82/amazon-molecule:2"
-  #   pre_build_image: true
-  #   privileged: true
-  #   volume_mounts:
-  #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  # - name: ssh-arch
-  #   image: "jam82/arch-molecule"
+  - name: ssh-arch
+    image: "arch-molecule:latest"
+    pre_build_image: true
   #   pre_build_image: true
   #   privileged: true
   #   volume_mounts:
@@ -29,22 +24,18 @@ platforms:
   #   privileged: true
   #   volume_mounts:
   #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  # - name: ssh-centos7
-  #   image: "jam82/centos-molecule:7"
-  #   pre_build_image: true
-  #   privileged: true
-  #   volume_mounts:
-  #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  # - name: ssh-debian8
-  #   image: "debian:jessie"
-  #   privileged: true
-  #   volume_mounts:
-  #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  # - name: ssh-debian9
-  #   image: "debian:stretch"
-  #   privileged: true
-  #   volume_mounts:
-  #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+  - name: ssh-centos7
+    image: "centos-molecule:7"
+    pre_build_image: true
+  - name: ssh-debian8
+    image: "debian-molecule:8"
+    pre_build_image: true
+  - name: ssh-debian9
+    image: "debian-molecule:9"
+    pre_build_image: true
+  - name: ssh-debian10
+    image: "debian-molecule:10"
+    pre_build_image: true
   # - name: ssh-opensuse-leap
   #   image: "opensuse:leap"
   #   privileged: true
@@ -55,15 +46,12 @@ platforms:
   #   privileged: true
   #   volume_mounts:
   #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  # - name: ssh-ubuntu1604
-  #   image: "jam82/ubuntu1604"
+  - name: ssh-ubuntu1604
+    image: "ubuntu-molecule:16.04"
+    pre_build_image: true
   - name: ssh-ubuntu1804
-    image: "1804:latest"
-  # - name: ssh-ubuntu1804
-  #   image: "ubuntu:18.04"
-  #   privileged: true
-  #   volume_mounts:
-  #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    image: "ubuntu-molecule:18.04"
+    pre_build_image: true
 provisioner:
   name: ansible
   log: true
