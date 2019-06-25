@@ -2,9 +2,10 @@
 # role: ansible-role-ssh
 # file: tasks/sshd.yml
 
-- name: debug rekey_limit
-  debug:
-    msg: "{{ sshd_rekey_limit }}"
+- name: Restart sshd
+  service:
+    name: "{{ sshd_service_name }}"
+    state: restarted
 
 - name: Set up sshd configuration in /etc/ssh/sshd_config
   template:
@@ -16,6 +17,3 @@
     backup: 'yes'
     validate: '/usr/sbin/sshd -T -C user=root -C host=localhost -C addr=localhost -f %s'
   notify: restart sshd
-
-# - name: Create ssh host keys (if non-existend or when forced)
-#   shell:

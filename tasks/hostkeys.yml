@@ -7,10 +7,6 @@
     path: "{{ hostkey.path }}"
   register: hostkey_file
 
-- name: Debug hostkey_file.stat.exists
-  debug:
-    msg: "hostkey.path: {{ hostkey_file.stat.exists }}"
-
 - name: Create ssh host keys
   shell: "set -o pipefail && echo -e 'y' | ssh-keygen -q -t {{ hostkey.type }} -N '' -f {{ hostkey.path }} >/dev/null"
   args:

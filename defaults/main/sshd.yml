@@ -3,7 +3,7 @@
 # file: defaults/main/sshd.yml
 
 # write ssh server configuration to /etc/ssh/sshd_conf
-sshd_enabled: True
+sshd_enabled: true
 
 # port sshd will listen on
 sshd_port: 22
