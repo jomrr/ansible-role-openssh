@@ -16,5 +16,5 @@ ssh_identity_files:
   - '~/.ssh/id_rsa'
   - '~/.ssh/id_ed25519'
 
-# renegotiate session key after 64M of data or 1800 seconds
+# renegotiate session key after 128M of data or 1800 seconds
 ssh_rekey_limit: '128M 1800'

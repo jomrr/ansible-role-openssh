@@ -4,9 +4,6 @@
 
 ssh_packages:
   - openssh
-  - binutils
 
 sshd_packages:
   - openssh
-
-sshd_service_name: ssh

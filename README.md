@@ -4,21 +4,66 @@ Ansible role for setting up ssh.
 
 ## Supported Platforms
 
-* Debian 8, 9
+* Arch Linux
+* Centos 6, 7
+* Debian 8, 9, 10
 * Ubuntu 16.04, 18.04
 
 ## Requirements
 
 Ansible 2.7 or higher is recommended.
 
-## Variables
+## Defaults and Variables
 
-Variables for this
+The default values for all variables are stored in the following files:
+* defaults/main/main.yml
+* defaults/main/ssh.yml
+* defaults/main/sshd.yml
 
-| variable | default value in defaults/main.yml | description |
-| -------- | ---------------------------------- | ----------- |
-| role_ssh_enabled | false | determine whether role is enabled (true) or not (false) |
+Variables for this role are:
 
+| file | variable | default value in defaults/main/*.yml | description |
+| ---- | -------- | ---------------------------------- | ----------- |
+| main.yml | role_ssh_enabled | false | determine whether role is enabled (true) or not (false) |
+| ssh.yml | ssh_enabled | true | enable configuration of /etc/ssh/ssh_config |
+| ssh.yml | ssh_port | '22' | default port ssh tries to connect to
+| ssh.yml | ssh_address_family | 'inet' | address family type |
+| ssh.yml | ssh_identity_files |   - '~/.ssh/identity'<br/>- '~/.ssh/id_rsa'<br/>  - '~/.ssh/id_ed25519'| where ssh looks for identity files |
+| ssh.yml | ssh_rekey_limit | '128M 1800' | renegotiate session key after 64M of data or 1800 seconds |
+| sshd_enabled |
+|
+|
+
+The set of allowed algorithms is stored in the following dict ssh_algorithms in file defaults/main/main.yml:
+```yaml
+ssh_algorithms:
+  ciphers:
+    - chacha20-poly1305@openssh.com
+    - aes256-gcm@openssh.com
+    - aes128-gcm@openssh.com
+    - aes256-ctr
+    - aes192-ctr
+    - aes128-ctr
+  kexs:
+    - sntrup4591761x25519-sha512@tinyssh.org
+    - curve25519-sha256@libssh.org
+    - curve25519-sha256
+    - diffie-hellman-group18-sha512
+    - diffie-hellman-group16-sha512
+    - diffie-hellman-group14-sha256
+    - diffie-hellman-group-exchange-sha256
+  hostkeys:
+    - ssh-ed25519-cert-v01@openssh.com
+    - ssh-ed25519
+    - ssh-rsa-cert-v01@openssh.com
+    - ssh-rsa
+  macs:
+    - hmac-sha2-512-etm@openssh.com
+    - hmac-sha2-256-etm@openssh.com
+    - umac-128-etm@openssh.com
+    - hmac-sha2-512
+    - hmac-sha2-256
+```
 ## Dependencies
 
 None.

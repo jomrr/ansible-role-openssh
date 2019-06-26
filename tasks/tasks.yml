@@ -31,7 +31,6 @@
 - name: Include tasks for setting up ssh
   include_tasks: ssh.yml
   when: ssh_enabled | bool
-    or sshd_enabled | bool
 
 - name: Include tasks for setting up sshd
   include_tasks: sshd.yml
@@ -44,4 +43,4 @@
 
 - name: Debug ssh version
   debug:
-    msg: "{{ ssh_version }}"
+    msg: "{{ ssh_version.stdout }}"

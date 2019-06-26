@@ -1,0 +1,8 @@
+---
+# role: ansible-role-ssh
+# file: vars/main.yml
+
+ssh_tools_packages:
+  - binutils
+
+sshd_service_name: sshd

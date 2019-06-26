@@ -2,6 +2,15 @@
 # role: ansible-role-ssh
 # file: tasks/setup.yml
 
+# binutils are needed below ssh 6.3, because -Q option is not available.
+- name: Install binutils for algorithm extraction
+  package:
+    name: "{{ ssh_tools_package }}"
+    state: present
+  loop: "{{ ssh_tools_packages }}"
+  loop_control:
+    loop_var: ssh_tools_package
+
 - name: Install ssh client packages
   package:
     name: "{{ ssh_package }}"

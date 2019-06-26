@@ -109,3 +109,9 @@ sshd_per_group_settings: {}
 #     X11Forwarding: yes
 #     AllowTcpForwarding: yes
 sshd_per_user_settings: {}
+
+# path to moduli file for diffie hellman key exchange
+sshd_moduli_file: '/etc/ssh/moduli'
+
+# minimum length of primes in moduli file
+sshd_moduli_minimum: 3072
