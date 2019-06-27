@@ -16,31 +16,31 @@
   loop_control:
     loop_var: vars_file
 
-# - name: Include tasks for installing openssh
-#   include_tasks: setup.yml
+- name: Include tasks for installing openssh
+  include_tasks: setup.yml
 
-# - name: Include tasks for setting up host keys
-#   include_tasks: hostkeys.yml
-#   loop: "{{ sshd_host_keys }}"
-#   loop_control:
-#     loop_var: hostkey
+- name: Include tasks for setting up host keys
+  include_tasks: hostkeys.yml
+  loop: "{{ sshd_host_keys }}"
+  loop_control:
+    loop_var: hostkey
 
 - name: Include tasks for setting version related algorithm facts
   include_tasks: version.yml
 
-# - name: Include tasks for setting up ssh
-#   include_tasks: ssh.yml
-#   when: ssh_enabled | bool
+- name: Include tasks for setting up ssh
+  include_tasks: ssh.yml
+  when: ssh_enabled | bool
 
 - name: Include tasks for setting up sshd
   include_tasks: sshd.yml
   when: sshd_enabled | bool
 
-# - name: Enable/Disable sshd according to sshd_enabled
-#   service:
-#     name: "{{ sshd_service_name }}"
-#     enabled: "{{ sshd_enabled | bool }}"
+- name: Enable/Disable sshd according to sshd_enabled
+  service:
+    name: "{{ sshd_service_name }}"
+    enabled: "{{ sshd_enabled | bool }}"
 
 - name: Debug ssh version
   debug:
-    msg: "{{ ssh_version.stdout }}"
+    msg: "{{ ssh_version }}"

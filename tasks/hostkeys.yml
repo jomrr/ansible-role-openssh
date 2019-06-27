@@ -2,12 +2,12 @@
 # role: ansible-role-ssh
 # file: tasks/hostkeys.yml
 
-- name: Check that host key files exist
+- name: Check that {{ hostkey.path }} exist
   stat:
     path: "{{ hostkey.path }}"
   register: hostkey_file
 
-- name: Create ssh host keys
+- name: Create {{ hostkey.path }}
   shell: "set -o pipefail && echo -e 'y' | ssh-keygen -q -t {{ hostkey.type }} -N '' -f {{ hostkey.path }} >/dev/null"
   args:
     executable: /bin/bash

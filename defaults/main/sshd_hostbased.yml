@@ -13,3 +13,37 @@ sshd_ignore_user_known_hosts: 'yes'
 
 # ignore users ~/.rhosts and ~/.shosts files
 sshd_ignore_rhosts: 'yes'
+
+# HostbasedUsesNameFromPacketOnly
+# Specifies whether or not the server will attempt to perform a reverse name
+# lookup when matching the name in the ~/.shosts, ~/.rhosts,
+# and /etc/hosts.equiv files during HostbasedAuthentication.
+# A setting of ''yes'' means that sshd(8) uses the name supplied by the
+# client rather than attempting to resolve the name from the TCP
+# connection itself. The default is ''no''.
+sshd_hostbased_uses_name_from_packet_only: 'no'
+
+# HostKey
+# Specifies a file containing a private host key used by SSH.
+# The defaults are /etc/ssh/ssh_host_ecdsa_key,
+# /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_rsa_key.
+# Note that sshd(8) will refuse to use a file if it is group/world-accessible
+# and that the HostKeyAlgorithms option restricts which of the keys are
+# actually used by sshd(8).
+# It is possible to have multiple host key files. It is also possible to
+# specify public host key files instead. In this case operations on the
+# private key will be delegated to an ssh-agent(1).
+#
+# every key not in the list, will be deleted
+# even if sshd_host_key_regenerate = False
+# if you want ecdsa add:
+# - type: ecdsa
+#   path: ssh_host_ecdsa_key
+sshd_host_keys:
+  - type: rsa
+    path: '/etc/ssh/ssh_host_rsa_key'
+  - type: ed25519
+    path: '/etc/ssh/ssh_host_ed25519_key'
+
+# HostKeyAlgorithms and HostKeyAccptedTypes are used from
+# ssh_algorithms.keys defined in defaults/main/main.yml

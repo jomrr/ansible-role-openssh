@@ -3,7 +3,7 @@
 # file: defaults/main/sshd_gssapi.yml
 
 # GSSAPI Authentication ------------------------------------------------------
-# Note that these options apply to protocol version 2 only. 
+# Note that these options apply to protocol version 2 only.
 
 # Specifies whether user authentication based on GSSAPI is allowed.
 # The default is ''no''.
@@ -28,5 +28,5 @@ sshd_gssapi_key_exchange: 'no'
 # Controls whether the user's GSSAPI credentials should be updated following
 # a successful connection rekeying. This option can be used to accepted
 # renewed or updated credentials from a compatible client.
-# The default is ''no''. 
+# The default is ''no''.
 sshd_gssapi_store_credentials_on_rekey: 'no'

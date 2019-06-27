@@ -54,11 +54,11 @@ PasswordAuthentication yes
 PermitLocalCommand no
 Port {{ ssh_port }}
 Protocol 2
-RekeyLimit {{ ssh_rekey_limit }}
+# RekeyLimit {{ ssh_rekey_limit }}
 StrictHostKeyChecking ask
 Tunnel no
-{% if ssh_version | float is version('5.4', '>=') 
-  and ssh_version | float is version('7.1', '<=') %}
+{% if ssh_version is version('5.4', '>=', True)
+  and ssh_version is version('7.1', '<=', True) %}
 UseRoaming no
 {% endif %}
 VerifyHostKeyDNS no

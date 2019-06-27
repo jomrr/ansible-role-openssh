@@ -21,13 +21,6 @@ ListenAddress {{ address_v6 }}
 {% endfor %}
 
 {% endif %}
-{% if (sshd_host_keys | length) > 0 %}
-# SSH Host Keys
-{% for hostkey in sshd_host_keys %}
-HostKey {{ hostkey.path }}
-{% endfor %}
-
-{% endif %}
 # Ciphers and Keying ---------------------------------------------------------
 # RekeyLimit
 {% if ssh_ciphers is defined %}
@@ -60,7 +53,7 @@ PubkeyAuthentication {{ sshd_pubkey_auth }}
 # Expect .ssh/authorized_keys2 to be disregarded by default in future.
 AuthorizedKeysFile {{ sshd_authorized_keys_file }}
 AuthorizedPrincipalsFile none
-{% if ssh_version | float is version('6.1', '>=') %}
+{% if ssh_version is version('6.1', '>=', True) %}
 AuthorizedKeysCommand none
 AuthorizedKeysCommandUser nobody
 {% endif %}
@@ -73,10 +66,17 @@ HostbasedAuthentication {{ sshd_hostbased_auth }}
 IgnoreUserKnownHosts {{ sshd_ignore_user_known_hosts }}
 # Don't read the user's ~/.rhosts and ~/.shosts files
 IgnoreRhosts {{ sshd_ignore_rhosts }}
-# HostbasedAcceptedKeyTypes
-# HostbasedUsesNameFromPacketOnly
-# HostKey
-# HostKeyAlgorithms
+HostbasedUsesNameFromPacketOnly {{ sshd_hostbased_uses_name_from_packet_only }}
+{% if (sshd_host_keys | length) > 0 %}
+{% if ssh_version is version('7.0', '>=', True) %}
+HostbasedAcceptedKeyTypes {{ ssh_keys | join('') }}
+HostKeyAlgorithms {{ ssh_keys | join('') }}
+{% endif %}
+# SSH Host Keys
+{% for hostkey in sshd_host_keys %}
+HostKey {{ hostkey.path }}
+{% endfor %}
+{% endif %}
 
 # Password Authentication ----------------------------------------------------
 # To disable tunneled clear text passwords, change to no here!
@@ -127,7 +127,7 @@ GatewayPorts no
 X11Forwarding no
 X11DisplayOffset 10
 X11UseLocalhost yes
-{% if ssh_version | float is version('6.5', '>=') %}
+{% if ssh_version is version('6.5', '>=', True) %}
 PermitTTY yes
 {% endif %}
 PrintMotd no
@@ -142,7 +142,7 @@ UseDNS {{ sshd_use_dns }}
 MaxStartups 10:30:60
 PermitTunnel no
 ChrootDirectory none
-{% if ssh_version | float is version('6.0', '>=') %}
+{% if ssh_version is version('6.0', '>=', True) %}
 VersionAddendum none
 {% endif %}
 

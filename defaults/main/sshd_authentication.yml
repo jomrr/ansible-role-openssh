@@ -26,7 +26,7 @@ sshd_max_sessions: 3
 
 # Specifies whether public key authentication is allowed.
 # The default is ''yes''.
-# Note that this option applies to protocol version 2 only. 
+# Note that this option applies to protocol version 2 only.
 sshd_pubkey_auth: 'yes'
 
 # Specifies the file that contains the public keys that can be used for
@@ -36,7 +36,7 @@ sshd_pubkey_auth: 'yes'
 # directory of the user being authenticated, and %u is replaced by the
 # username of that user. After expansion, AuthorizedKeysFile is taken to be
 # an absolute path or one relative to the user's home directory.
-# The default is ''.ssh/authorized_keys''. 
+# The default is ''.ssh/authorized_keys''.
 sshd_authorized_keys_file: '%h/.ssh/authorized_keys'
 
 # Password Authentication ----------------------------------------------------
@@ -47,7 +47,7 @@ sshd_password_auth: 'no'
 
 # Specifies whether challenge-response authentication is allowed
 # (e.g. via PAM or though authentication styles supported in login.conf(5))
-# The default is ''yes''. 
+# The default is ''yes''.
 sshd_challenge_auth: 'no'
 
 # PAM Authentication ---------------------------------------------------------

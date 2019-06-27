@@ -7,10 +7,14 @@
   args:
     executable: /bin/bash
   changed_when: False
-  register: ssh_version
+  register: ssh_version_out
   check_mode: no
 
-- name: Determine ssh available ciphers
+- name: Set fact ssh_version
+  set_fact:
+    ssh_version: "{{ ssh_version_out.stdout }}"
+
+- name: Determine available ciphers
   shell: set -o pipefail && strings /usr/sbin/sshd | grep aes128 | head -n1
   args:
     executable: /bin/bash
@@ -22,7 +26,7 @@
   set_fact:
     ssh_available_ciphers: "{{ ssh_gather_ciphers.stdout.split(',') }}"
 
-- name: Determine ssh available kexs
+- name: Determine available kexs
   shell: set -o pipefail && strings /usr/sbin/sshd | grep diffie-hellman | head -n1
   args:
     executable: /bin/bash
@@ -34,7 +38,7 @@
   set_fact:
     ssh_available_kexs: "{{ ssh_gather_kexs.stdout.split(',') }}"
 
-- name: Determine ssh available keys
+- name: Determine available key types
   shell: set -o pipefail && strings /usr/sbin/sshd | grep ssh-rsa | head -n1
   args:
     executable: /bin/bash
@@ -46,7 +50,7 @@
   set_fact:
     ssh_available_keys: "{{ ssh_gather_keys.stdout.split(',') }}"
 
-- name: Determine ssh available macs
+- name: Determine available macs
   shell: set -o pipefail && strings /usr/sbin/sshd | grep hmac | head -n1
   args:
     executable: /bin/bash

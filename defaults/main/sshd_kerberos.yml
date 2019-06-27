@@ -7,12 +7,12 @@
 # Specifies whether the password provided by the user for
 # PasswordAuthentication will be validated through the Kerberos KDC.
 # To use this option, the server needs a Kerberos servtab which allows
-# the verification of the KDC's identity. The default is 'no. 
+# the verification of the KDC's identity. The default is 'no.
 sshd_kerberos_auth: 'no'
 
-# If AFS is active and the user has a Kerberos 5 TGT, attempt to 
-# acquire an AFS token before accessing the user's home directory. 
-# The default is 'no'. 
+# If AFS is active and the user has a Kerberos 5 TGT, attempt to
+# acquire an AFS token before accessing the user's home directory.
+# The default is 'no'.
 sshd_kerberos_get_afs_token: 'no'
 
 # If password authentication through Kerberos fails then the password
@@ -21,7 +21,7 @@ sshd_kerberos_get_afs_token: 'no'
 sshd_kerberos_or_local: 'yes'
 
 # Specifies whether to automatically destroy the user's ticket cache file
-# on logout. The default is 'yes'. 
+# on logout. The default is 'yes'.
 sshd_kerberos_ticket_cleanup: 'yes'
 
 # Specifies whether to look at .k5login file for user's aliases.
