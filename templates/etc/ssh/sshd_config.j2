@@ -47,12 +47,13 @@ LogLevel INFO
 # Authentication Methods -----------------------------------------------------
 # AuthenticationMethods gssapi-with-mic, hostbased, keyboard-interactive, password, publickey
 
-# Key baesd Authentication ---------------------------------------------------
 LoginGraceTime {{ sshd_login_grace_time }}
 PermitRootLogin {{ sshd_permit_root_login }}
 StrictModes yes
 MaxAuthTries {{ sshd_max_auth_tries }}
 MaxSessions {{ sshd_max_sessions }}
+
+# Key baesd Authentication ---------------------------------------------------
 
 PubkeyAuthentication {{ sshd_pubkey_auth }}
 
@@ -88,15 +89,24 @@ PermitEmptyPasswords no
 ChallengeResponseAuthentication {{ sshd_challenge_auth }}
 
 # Kerberos Authentication ----------------------------------------------------
-KerberosAuthentication no
-KerberosOrLocalPasswd yes
-KerberosTicketCleanup yes
+KerberosAuthentication {{ sshd_kerberos_auth }}
+{% if ansible_distribution != 'Archlinux' %}
+KerberosGetAFSToken {{ sshd_kerberos_get_afs_token }}
+{% endif %}
+KerberosOrLocalPasswd {{ sshd_kerberos_or_local }}
+KerberosTicketCleanup {{ sshd_kerberos_ticket_cleanup }}
+{% if ansible_os_family == 'RedHat' %}
+KerberosUseKuserok {{ sshd_kerberos_use_kuserok }}
+{% endif %}
 
 # GSSAPI Authentication ------------------------------------------------------
-GSSAPIAuthentication no
-GSSAPICleanupCredentials yes
-GSSAPIStrictAcceptorCheck yes
-#GSSAPIKeyExchange no
+GSSAPIAuthentication {{ sshd_gssapi_auth }}
+GSSAPICleanupCredentials {{ sshd_gssapi_cleanup_credentials }}
+GSSAPIStrictAcceptorCheck {{ sshd_gssapi_strict_accept_or_check }}
+{% if ansible_distribution != 'Archlinux' %}
+GSSAPIKeyExchange {{ sshd_gssapi_key_exchange }}
+GSSAPIStoreCredentialsOnRekey {{ sshd_gssapi_store_credentials_on_rekey }}
+{% endif %}
 
 # PAM Authentication ---------------------------------------------------------
 # Set this to 'yes' to enable PAM authentication, account processing,
@@ -123,13 +133,12 @@ PermitTTY yes
 PrintMotd no
 PrintLastLog yes
 TCPKeepAlive yes
-#UsePrivilegeSeparation sandbox
 PermitUserEnvironment no
 Compression yes
 ClientAliveInterval 0
 ClientAliveCountMax 3
 UseDNS {{ sshd_use_dns }}
-PidFile /var/run/sshd.pid
+# PidFile /var/run/sshd.pid
 MaxStartups 10:30:60
 PermitTunnel no
 ChrootDirectory none
@@ -137,7 +146,7 @@ ChrootDirectory none
 VersionAddendum none
 {% endif %}
 
-# No default banner path
+# default banner path
 Banner none
 
 # Allow client to pass locale environment variables

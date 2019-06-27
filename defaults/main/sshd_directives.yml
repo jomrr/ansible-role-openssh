@@ -1,0 +1,31 @@
+---
+# role: ansible-role-ssh
+# file: defaults/main/sshd_directives.yml
+
+# Allow/Deny Directives ------------------------------------------------------
+
+# deny ssh login for listed users
+sshd_deny_users: []
+
+# allow ssh login for listed users only
+sshd_allow_users: []
+
+# deny ssh login for listed groups
+sshd_deny_groups: []
+
+# allow ssh login for listed groups only
+sshd_allow_groups: []
+
+# Per Group Settings ---------------------------------------------------------
+
+# group specific settings defined via Match Group
+sshd_per_group_settings: {}
+
+# Per User Settings ----------------------------------------------------------
+
+# user specific settings defined via Match User
+# sshd_per_user_settings:
+#   myuser:
+#     X11Forwarding: yes
+#     AllowTcpForwarding: yes
+sshd_per_user_settings: {}

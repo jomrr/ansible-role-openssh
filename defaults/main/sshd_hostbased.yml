@@ -1,0 +1,15 @@
+---
+# role: ansible-role-ssh
+# file: defaults/main/sshd_hostbased.yml
+
+# Host based Authentication --------------------------------------------------
+
+# enable host based authentication
+# a good thing to have, but not for beginners, so off by default
+sshd_hostbased_auth: 'no'
+
+# ignore users known_hosts file
+sshd_ignore_user_known_hosts: 'yes'
+
+# ignore users ~/.rhosts and ~/.shosts files
+sshd_ignore_rhosts: 'yes'

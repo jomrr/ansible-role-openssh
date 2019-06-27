@@ -1,0 +1,74 @@
+---
+# role: ansible-role-ssh
+# file: defaults/main/sshd_authentication.yml
+
+# Authentication Methods and Settings ----------------------------------------
+
+# available authentication methods
+# sshd_authentication_methods:
+
+# The server disconnects after this time if the user has not successfully
+# logged in. If the value is 0, there is no time limit.
+# The default is 120 seconds.
+sshd_login_grace_time: '60'
+
+# permit root login,
+# values are yes, prohibit-password, forced-commands-only, or no
+sshd_permit_root_login: 'no'
+
+# maximum number of auth tries
+sshd_max_auth_tries: 3
+
+# max sessions per network connection
+sshd_max_sessions: 3
+
+# Key baesd Authentication ---------------------------------------------------
+
+# Specifies whether public key authentication is allowed.
+# The default is ''yes''.
+# Note that this option applies to protocol version 2 only. 
+sshd_pubkey_auth: 'yes'
+
+# Specifies the file that contains the public keys that can be used for
+# user authentication. AuthorizedKeysFile may contain tokens of the form %T
+# which are substituted during connection setup. The following tokens are
+# defined: %% is replaced by a literal '%', %h is replaced by the home
+# directory of the user being authenticated, and %u is replaced by the
+# username of that user. After expansion, AuthorizedKeysFile is taken to be
+# an absolute path or one relative to the user's home directory.
+# The default is ''.ssh/authorized_keys''. 
+sshd_authorized_keys_file: '%h/.ssh/authorized_keys'
+
+# Password Authentication ----------------------------------------------------
+
+# Specifies whether password authentication is allowed.
+# The default is ''yes''.
+sshd_password_auth: 'no'
+
+# Specifies whether challenge-response authentication is allowed
+# (e.g. via PAM or though authentication styles supported in login.conf(5))
+# The default is ''yes''. 
+sshd_challenge_auth: 'no'
+
+# PAM Authentication ---------------------------------------------------------
+
+# Enables the Pluggable Authentication Module interface. If set to ''yes''
+# this will enable PAM authentication using ChallengeResponseAuthentication
+# and PasswordAuthentication in addition to PAM account and session module
+# processing for all authentication types.
+# Because PAM challenge-response authentication usually serves an equivalent
+# role to password authentication, you should disable either
+# PasswordAuthentication or ChallengeResponseAuthentication.
+# If UsePAM is enabled, you will not be able to run sshd(8) as
+# a non-root user. The default is ''no''.
+# If you just want the PAM account and session checks to run without
+# PAM authentication, then enable this but set PasswordAuthentication
+# and ChallengeResponseAuthentication to 'no'.
+sshd_use_pam: 'yes'
+
+# Misc Settings --------------------------------------------------------------
+
+# Specifies whether sshd(8) should look up the remote host name and check
+# that the resolved host name for the remote IP address maps back to the very
+# same IP address. The default is ''yes''.
+sshd_use_dns: 'yes'

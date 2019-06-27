@@ -2,8 +2,23 @@
 # role: ansible-role-ssh
 # file: defaults/main/sshd.yml
 
-# write ssh server configuration to /etc/ssh/sshd_conf
+# perform sshd configuration and replace /etc/ssh/sshd_conf
 sshd_enabled: true
+
+# path to moduli file for diffie hellman key exchange
+sshd_moduli_file: '/etc/ssh/moduli'
+
+# minimum length of primes in moduli file
+sshd_moduli_minimum: 3072
+
+# force renewal of ssh host keys
+# attenation: existing known_hosts entries become invalid
+sshd_host_key_regenerate: False
+
+# key length of rsa key
+sshd_rsa_keylength: 4096
+
+# Connection and system settings ---------------------------------------------
 
 # port sshd will listen on
 sshd_port: 22
@@ -23,10 +38,6 @@ sshd_listen_addr_v4:
 # list of ipv6 addresses to listen on
 sshd_listen_addr_v6: []
 
-# force renewal of ssh host keys
-# attenation: existing known_hosts entries become invalid
-sshd_host_key_regenerate: False
-
 # ssh host keys
 # every key not in the list, will be deleted
 # even if sshd_host_key_regenerate = False
@@ -38,80 +49,7 @@ sshd_host_keys:
   - type: ed25519
     path: '/etc/ssh/ssh_host_ed25519_key'
 
-# available authentication methods
-# sshd_authentication_methods:
-
-# key length of rsa key
-sshd_rsa_keylength: 4096
+# Ciphers and Keying ---------------------------------------------------------
 
 # renegotiate session key after 64M of data or 1800 seconds
 sshd_rekey_limit: '128M 1800'
-
-# time to disconnect client if no successful authentication
-sshd_login_grace_time: '60'
-
-# permit root login,
-# values are yes, prohibit-password, forced-commands-only, or no
-sshd_permit_root_login: 'no'
-
-# maximum number of auth tries
-sshd_max_auth_tries: 3
-
-# max sessions per network connection
-sshd_max_sessions: 3
-
-# enable pubkey authentication
-sshd_pubkey_auth: 'yes'
-
-# auhtorized keys file
-sshd_authorized_keys_file: '%h/.ssh/authorized_keys'
-
-# enable host based authentication
-# a good thing to have, but not for beginners, so off by default
-sshd_hostbased_auth: 'no'
-
-# ignore users known_hosts file
-sshd_ignore_user_known_hosts: 'yes'
-
-# ignore users ~/.rhosts and ~/.shosts files
-sshd_ignore_rhosts: 'yes'
-
-# enable cleartext password authentication
-sshd_password_auth: 'no'
-
-# enable challenge response authentication
-sshd_challenge_auth: 'no'
-
-# enable pam authentication
-sshd_use_pam: 'yes'
-
-# use dns verification
-sshd_use_dns: 'no'
-
-# deny ssh login for listed users
-sshd_deny_users: []
-
-# allow ssh login for listed users only
-sshd_allow_users: []
-
-# deny ssh login for listed groups
-sshd_deny_groups: []
-
-# allow ssh login for listed groups only
-sshd_allow_groups: []
-
-# group specific settings defined via Match Group
-sshd_per_group_settings: {}
-
-# user specific settings defined via Match User
-# sshd_per_user_settings:
-#   myuser:
-#     X11Forwarding: yes
-#     AllowTcpForwarding: yes
-sshd_per_user_settings: {}
-
-# path to moduli file for diffie hellman key exchange
-sshd_moduli_file: '/etc/ssh/moduli'
-
-# minimum length of primes in moduli file
-sshd_moduli_minimum: 3072
