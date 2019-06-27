@@ -37,8 +37,3 @@ sshd_listen_addr_v4:
 
 # list of ipv6 addresses to listen on
 sshd_listen_addr_v6: []
-
-# Ciphers and Keying ---------------------------------------------------------
-
-# renegotiate session key after 64M of data or 1800 seconds
-sshd_rekey_limit: '128M 1800'
