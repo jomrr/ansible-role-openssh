@@ -26,6 +26,11 @@ The default values for all variables are stored in the following files:
 * defaults/main/main.yml
 * defaults/main/ssh.yml
 * defaults/main/sshd.yml
+* defaults/main/sshd_authentication.yml
+* defaults/main/sshd_directives.yml
+* defaults/main/sshd_gssapi.yml
+* defaults/main/sshd_hostbased.yml
+* defaults/main/sshd_kerberos.yml
 
 Variables for this role are:
 
@@ -35,7 +40,7 @@ Variables for this role are:
 | ssh_enabled | true | enable configuration of /etc/ssh/ssh_config |
 | ssh_port | '22' | default port ssh tries to connect to
 | ssh_address_family | 'inet' | address family type |
-| ssh_identity_files | ['~/.ssh/identity', '~/.ssh/id_rsa', '~/.ssh/id_ed25519' ] | where ssh looks for identity files |
+| ssh_identity_files | ['\~/.ssh/identity', '\~/.ssh/id_rsa', '\~/.ssh/id_ed25519' ] | where ssh looks for identity files |
 | sshd_enabled | true | enable configuration of /etc/ssh/sshd_config |
 | sshd_moduli_file | '/etc/ssh/moduli' | location of DH moduli file |
 | sshd_moduli_minimum | 3072 | minimum length od DH parameters |
