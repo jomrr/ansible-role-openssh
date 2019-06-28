@@ -27,6 +27,7 @@
 - name: "TESTING --- Get public key"
   command: cat ~/.ssh/identity.pub
   register: pubkey
+  changed_when: False
   when: ssh_test_create_key | bool
 
 - name: "TESTING --- Setup authorized_key file"
