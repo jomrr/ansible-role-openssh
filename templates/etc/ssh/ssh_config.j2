@@ -54,7 +54,7 @@ PasswordAuthentication yes
 PermitLocalCommand no
 Port {{ ssh_port }}
 Protocol 2
-# RekeyLimit {{ ssh_rekey_limit }}
+# RekeyLimit
 StrictHostKeyChecking ask
 Tunnel no
 {% if ssh_version is version('5.4', '>=', True)
