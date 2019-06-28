@@ -18,5 +18,5 @@ def test_ssh_login(host):
     # so this is a todo for times when there is more time ;-)
     if os != 'debian':
         # this is testing sshd and ssh_config
-        login = host.run('ssh -oStrictHostKeyChecking=no localhost')
+        login = host.run('ssh localhost && exit')
         assert login.rc == 0
