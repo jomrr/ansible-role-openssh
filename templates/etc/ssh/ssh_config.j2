@@ -34,8 +34,10 @@ ForwardAgent no
 ForwardX11 no
 GSSAPIAuthentication no
 GSSAPIDelegateCredentials no
+{% if ansible_distribution != 'Archlinux' %}
 GSSAPIKeyExchange no
 GSSAPITrustDns no
+{% endif %}
 HashKnownHosts yes
 HostbasedAuthentication no
 {% if ssh_keys is defined %}
