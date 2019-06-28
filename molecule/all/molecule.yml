@@ -140,6 +140,7 @@ provisioner:
       all:
         role_ssh_enabled: true
         sshd_listen_addr_v4: ['0.0.0.0']
+        sshd_permit_root_login: 'prohibit-password'
 scenario:
   name: all
   test_sequence:
