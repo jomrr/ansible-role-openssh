@@ -15,3 +15,8 @@ ssh_identity_files:
   - '~/.ssh/identity'
   - '~/.ssh/id_rsa'
   - '~/.ssh/id_ed25519'
+
+# TESTING --- variables from here are just for test scenario -----------------
+# travis sometimes has strange behavior, so this is added
+# create ssh keypair for ansible user
+ssh_test_create_key: False

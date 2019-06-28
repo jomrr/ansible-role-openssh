@@ -28,9 +28,10 @@ provisioner:
   inventory:
     group_vars:
       all:
-        role_ssh_enabled: true
+        role_ssh_enabled: True
         sshd_listen_addr_v4: ['0.0.0.0']
         sshd_permit_root_login: 'yes'
+        ssh_test_create_key: True
 scenario:
   name: default
   test_sequence:

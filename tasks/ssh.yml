@@ -10,3 +10,28 @@
     owner: 'root'
     group: 'root'
     backup: 'yes'
+
+- name: Create ~/.ssh directory and set permissions
+  file:
+    path: ~/.ssh/
+    state: directory
+    mode: '0700'
+    modification_time: preserve
+    access_time: preserve
+
+- name: "TESTING --- Create ssh key"
+  openssh_keypair:
+    path: '~/.ssh/identity'
+  when: ssh_test_create_key | bool
+
+- name: "TESTING --- Get public key"
+  command: cat ~/.ssh/identity.pub
+  register: pubkey
+  when: ssh_test_create_key | bool
+
+- name: "TESTING --- Setup authorized_key file"
+  authorized_key:
+    user: "{{ ansible_become_user | default('root', True) }}"
+    state: present
+    key: "{{ pubkey.stdout }}"
+  when: ssh_test_create_key | bool
