@@ -14,8 +14,8 @@ def test_ssh_create_key(host):
     key = 'yes | ssh-keygen -q -t rsa -N "" -f /root/.ssh/id_rsa >/dev/null'
     cmd = host.run(key)
     assert cmd.rc == 0
-    cmd = host.run('cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys')
-    assert cmd.rc == 0
+    ak = host.run('cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys')
+    assert ak.rc == 0
 
 
 def test_ssh_login(host):
