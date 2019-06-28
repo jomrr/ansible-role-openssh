@@ -12,7 +12,7 @@ lint:
     config-file: molecule/shared/yamllint.yml
 platforms:
   - name: ssh-default
-    image: "jam82/${MOLECULE_DIST:-ubuntu-molecule:18.04}"
+    image: ${MOLECULE_DIST:-"jam82/ubuntu-molecule:18.04"}
     command: ${MOLECULE_DOCKER_CMD:-""}
     pre_build_image: true
     privileged: true
