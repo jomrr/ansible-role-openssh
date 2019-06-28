@@ -57,7 +57,7 @@ PermitLocalCommand no
 Port {{ ssh_port }}
 Protocol 2
 # RekeyLimit
-StrictHostKeyChecking ask
+StrictHostKeyChecking {{ ssh_strict_host_key_checking }}
 Tunnel no
 {% if ssh_version is version('5.4', '>=', True)
   and ssh_version is version('7.1', '<=', True) %}

@@ -11,10 +11,14 @@ ssh_port: 22
 # adress family, can be 'inet', 'inet6' or 'any'
 ssh_address_family: 'inet'
 
+# identity files to look for
 ssh_identity_files:
   - '~/.ssh/identity'
   - '~/.ssh/id_rsa'
   - '~/.ssh/id_ed25519'
+
+# enable strict hotkey checking in known_hosts
+ssh_strict_host_key_checking: 'ask'
 
 # TESTING --- variables from here are just for test scenario -----------------
 # travis sometimes has strange behavior, so this is added

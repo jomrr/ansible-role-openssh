@@ -142,6 +142,7 @@ provisioner:
         sshd_listen_addr_v4: ['0.0.0.0']
         sshd_permit_root_login: 'yes'
         ssh_test_create_key: True
+        ssh_strict_host_key_checking: 'no'
 scenario:
   name: all
   test_sequence:
