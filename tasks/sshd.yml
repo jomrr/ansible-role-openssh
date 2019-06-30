@@ -25,7 +25,7 @@
   template:
     src: 'etc/ssh/sshd_config.j2'
     dest: '/etc/ssh/sshd_config'
-    mode: '0644'
+    mode: '0600'
     owner: 'root'
     group: 'root'
     backup: 'yes'
