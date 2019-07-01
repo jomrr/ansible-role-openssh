@@ -11,11 +11,25 @@ ssh_port: 22
 # adress family, can be 'inet', 'inet6' or 'any'
 ssh_address_family: 'inet'
 
+ssh_challenge_response_authentication: 'yes'
+
+ssh_enable_ssh_keysign: 'no'
+
+ssh_gssapi_authentication: 'no'
+
+ssh_hostbased_authentication: 'no'
+
 # identity files to look for
 ssh_identity_files:
   - '~/.ssh/identity'
   - '~/.ssh/id_rsa'
   - '~/.ssh/id_ed25519'
+
+ssh_password_authentication: 'yes'
+
+ssh_rekey_limit_data: '512M'
+
+ssh_rekey_limit_time: '1800'
 
 # enable strict hotkey checking in known_hosts
 ssh_strict_host_key_checking: 'ask'
