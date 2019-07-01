@@ -20,7 +20,7 @@ sshd_permit_root_login: 'no'
 sshd_max_auth_tries: 3
 
 # max sessions per network connection
-sshd_max_sessions: 3
+sshd_max_sessions: 10
 
 # Key baesd Authentication ---------------------------------------------------
 

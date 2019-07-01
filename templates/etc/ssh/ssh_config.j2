@@ -17,6 +17,12 @@
 # ssh_config(5) man page.
 
 # Host specific settings -----------------------------------------------------
+{% for host in ssh_host_config.keys() %}
+Host {{ host }}
+  {% for option, value in ssh_host_config[host].items() %}
+  {{ option }} {{ value }}
+  {% endfor %}
+{% endfor %}
 
 # General host settings ------------------------------------------------------
 Host *
@@ -63,6 +69,7 @@ PasswordAuthentication {{ ssh_password_authentication }}
 PermitLocalCommand no
 Port {{ ssh_port }}
 Protocol 2
+PubkeyAuthentication {{ ssh_pubkey_authentication }}
 {% if ssh_version is version('7.5', '>=', True) %}
 RekeyLimit {{ ssh_rekey_limit_data }} {{ ssh_rekey_limit_time }}
 {% else %}

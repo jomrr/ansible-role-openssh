@@ -62,18 +62,18 @@
   set_fact:
     ssh_available_macs: "{{ ssh_gather_macs.stdout.split(',') }}"
 
-- name: Set fact ssh_ciphers (ssh_algorithms.ciphers | intersect(ssh_available_ciphers))
+- name: Set fact ssh_ciphers
   set_fact:
     ssh_ciphers: "{{ ssh_algorithms.ciphers | intersect(ssh_available_ciphers) | join(',') }}"
 
-- name: Set fact ssh_kexs (ssh_algorithms.kexs | intersect(ssh_available_kexs))
+- name: Set fact ssh_kexs
   set_fact:
     ssh_kexs: "{{ ssh_algorithms.kexs | intersect(ssh_available_kexs) | join(',') }}"
 
-- name: Set fact ssh_keys (ssh_algorithms.keys | intersect(ssh_available_keys))
+- name: Set fact ssh_keys
   set_fact:
     ssh_keys: "{{ ssh_algorithms.hostkeys | intersect(ssh_available_keys) | join(',') }}"
 
-- name: Set fact ssh_macs (ssh_algorithms.macs | intersect(ssh_available_macs))
+- name: Set fact ssh_macs
   set_fact:
     ssh_macs: "{{ ssh_algorithms.macs | intersect(ssh_available_macs) | join(',') }}"

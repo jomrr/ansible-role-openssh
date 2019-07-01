@@ -28,6 +28,6 @@
     mode: '0600'
     owner: 'root'
     group: 'root'
-    backup: 'yes'
+    backup: "{{ sshd_conf_backup }}"
     validate: '/usr/sbin/sshd -T -C user=root -C host=localhost -C addr=localhost -f %s'
   notify: restart sshd

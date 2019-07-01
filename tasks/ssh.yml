@@ -9,7 +9,7 @@
     mode: '0644'
     owner: 'root'
     group: 'root'
-    backup: 'yes'
+    backup: "{{ ssh_conf_backup }}"
 
 - name: Create ~/.ssh directory and set permissions
   file:

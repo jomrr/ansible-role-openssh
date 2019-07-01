@@ -5,6 +5,17 @@
 # write default ssh client configuration to /etc/ssh/ssh_conf
 ssh_enabled: True
 
+# create backup of ssh_config file
+ssh_conf_backup: 'no'
+
+# host specific configuration
+# for example:
+# ssh_host_config:
+#   test:
+#     X11Forwarding: 'yes'
+#     GSSAPIAuthentication: 'yes'
+ssh_host_config: {}
+
 # port ssh will connect to by default
 ssh_port: 22
 
@@ -26,6 +37,8 @@ ssh_identity_files:
   - '~/.ssh/id_ed25519'
 
 ssh_password_authentication: 'yes'
+
+ssh_pubkey_authentication: 'yes'
 
 ssh_rekey_limit_data: '512M'
 

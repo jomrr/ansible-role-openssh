@@ -33,6 +33,10 @@ provisioner:
         sshd_permit_root_login: 'yes'
         ssh_test_create_key: True
         ssh_strict_host_key_checking: 'no'
+        ssh_host_config:
+          test:
+            ForwardX11: 'yes'
+            GSSAPIAuthentication: 'yes'
 scenario:
   name: default
   test_sequence:

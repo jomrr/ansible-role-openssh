@@ -18,6 +18,9 @@ sshd_host_key_regenerate: False
 # key length of rsa key
 sshd_rsa_keylength: 4096
 
+# create backup of sshd_config file
+sshd_conf_backup: 'no'
+
 # Connection and system settings ---------------------------------------------
 
 # port sshd will listen on
