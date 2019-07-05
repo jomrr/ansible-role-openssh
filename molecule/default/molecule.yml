@@ -29,6 +29,7 @@ provisioner:
     group_vars:
       all:
         role_ssh_enabled: True
+        ssh_deploy_local_key_type: ''
         sshd_listen_addr_v4: ['0.0.0.0']
         sshd_permit_root_login: 'yes'
         ssh_test_create_key: True
