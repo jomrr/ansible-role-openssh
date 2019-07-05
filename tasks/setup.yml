@@ -29,3 +29,17 @@
   loop_control:
     loop_var: sshd_package
   when: sshd_enabled | bool
+
+- name: Check if {{ sshd_moduli_file }} contains weak DH parameters
+  shell: awk '$5 < {{ sshd_moduli_minimum }}' {{ sshd_moduli_file }}
+  register: sshd_register_moduli
+  changed_when: false
+  check_mode: no
+
+- name: Remove primes smaller than {{ sshd_moduli_minimum }}
+  shell: |
+    awk '$5 >= {{ sshd_moduli_minimum }}' {{ sshd_moduli_file }} > \
+    {{ sshd_moduli_file }}.new
+    [ -f {{ sshd_moduli_file }}.new ] && \
+    mv {{ sshd_moduli_file }}.new {{ sshd_moduli_file }} || true
+  when: sshd_register_moduli.stdout
