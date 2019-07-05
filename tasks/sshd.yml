@@ -21,6 +21,15 @@
     name: "{{ sshd_service_name }}"
     state: started
 
+- name: Inlcude local pubkey from current user in remote users authorized_keys
+  become: false
+  authorized_key:
+    user: "{{ ansible_user | default(ansible_user_id, True) }}"
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_' + ssh_deploy_local_key_type + '.pub') }}"
+  when: ssh_deploy_local_key_type | length > 0
+    and sshd_pubkey_auth | bool
+
 - name: Set up sshd configuration in /etc/ssh/sshd_config
   template:
     src: 'etc/ssh/sshd_config.j2'
