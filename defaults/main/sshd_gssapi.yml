@@ -8,14 +8,10 @@
 # Specifies whether user authentication based on GSSAPI is allowed.
 # The default is ''no''.
 sshd_gssapi_auth: 'no'
-# Specifies whether key exchange based on GSSAPI is allowed.
-# GSSAPI key exchange doesn't rely on ssh keys to verify host identity.
-# The default is ''no''.
-sshd_gssapi_cleanup_credentials: 'yes'
 # Specifies whether to automatically destroy the user's credentials cache
 # on logout.
 # The default is ''yes''.
-sshd_gssapi_strict_accept_or_check: 'yes'
+sshd_gssapi_cleanup_credentials: 'yes'
 # Determines whether to be strict about the identity of the GSSAPI acceptor
 # a client authenticates against. If ''yes'' then the client must authenticate
 # against the host service on the current hostname. If ''no'' then the client
@@ -24,6 +20,10 @@ sshd_gssapi_strict_accept_or_check: 'yes'
 # machines. The default is ''yes''. Note that this option applies only to
 # protocol version 2 GSSAPI connections, and setting it to ''no'' may only
 # work with recent Kerberos GSSAPI libraries.
+sshd_gssapi_strict_accept_or_check: 'yes'
+# Specifies whether key exchange based on GSSAPI is allowed.
+# GSSAPI key exchange doesn't rely on ssh keys to verify host identity.
+# The default is ''no''.
 sshd_gssapi_key_exchange: 'no'
 # Controls whether the user's GSSAPI credentials should be updated following
 # a successful connection rekeying. This option can be used to accepted
