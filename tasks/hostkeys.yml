@@ -17,7 +17,7 @@
     comment: "{{ ansible_fqdn | default(ansible_nodename, true) }}"
     size: "{{ hostkey.size | default(4096) }}"
     state: present
-    force: "{{ sshd_host_key_regenerate | bool }}"
+    force: "{{ sshd_host_key_regenerate }}"
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
 
 - name: Set permissions for private hostkeys
@@ -26,7 +26,7 @@
     owner: root
     group: root
     mode: '0600'
-  when: ssh_hostkey_capability.stdout > 0
+  when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
 
 - name: Set permissions for public hostkeys
   file:
@@ -34,4 +34,4 @@
     owner: root
     group: root
     mode: '0644'
-  when: ssh_hostkey_capability.stdout > 0
+  when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
