@@ -16,6 +16,24 @@
   when: ssh_deploy_key | length > 0
     and sshd_pubkey_auth | bool
 
+- name: Set up etc/ssh/shosts.equiv
+  template:
+    src: 'etc/ssh/shosts.equiv.j2'
+    dest: '/etc/ssh/shosts.equiv'
+    mode: '0600'
+    owner: 'root'
+    group: 'root'
+  when: sshd_hostbased_auth | bool
+
+- name: Set up etc/ssh/ssh_known_hosts
+  known_hosts:
+    path: /etc/ssh/ssh_known_hosts
+    name: "{{ item.key }}"
+    key: "{{ item.value }}"
+    state: present
+    hash_host: yes
+  loop: "{{ sshd_ssh_known_hosts | dict2items }}"
+
 - name: Set up sshd configuration in /etc/ssh/sshd_config
   template:
     src: 'etc/ssh/sshd_config.j2'

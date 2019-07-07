@@ -1,0 +1,4 @@
+{{ ansible_managed | comment }}
+{% for hostuser in sshd_shosts_equiv | dict2items %}
+{{ hostuser.key }} {{ hostuser.value }}
+{% endfor %}

@@ -34,8 +34,7 @@ sshd_hostbased_uses_name_from_packet_only: 'no'
 # specify public host key files instead. In this case operations on the
 # private key will be delegated to an ssh-agent(1).
 #
-# every key not in the list, will be deleted
-# even if sshd_host_key_regenerate = False
+# default keys are always generated, but keys not in list, are not used
 # if you want to add ecdsa:
 # - type: ecdsa
 #   path: ssh_host_ecdsa_key
@@ -43,7 +42,7 @@ sshd_hostbased_uses_name_from_packet_only: 'no'
 # WARNING: On CentOS 6 and all derivatives like Amazon and Oracle 6
 # only the first entry without size is shown. 
 # Either a stupid mistake I don't see right now, 
-# python <2.7 behavior or a bug.
+# python <2.7 behavior or a bug. # NEEDS INVESTIGATION
 sshd_host_keys:
   - type: 'rsa'
     path: '/etc/ssh/ssh_host_rsa_key'
