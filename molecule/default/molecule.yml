@@ -31,14 +31,15 @@ provisioner:
     group_vars:
       all:
         role_ssh_enabled: True
-        ssh_deploy_local_key_type: ''
+        ssh_deploy_key: ''
         sshd_listen_addr_v4: ['0.0.0.0']
         sshd_permit_root_login: 'yes'
         ssh_test_create_key: True
         ssh_strict_host_key_checking: 'no'
+        ssh_enable_ssh_keysign: 'yes'
         ssh_host_config:
-          test:
-            ForwardX11: 'yes'
+          '*.example.com':
+            HostbasedAuthentication: 'yes'
             GSSAPIAuthentication: 'yes'
 scenario:
   name: default

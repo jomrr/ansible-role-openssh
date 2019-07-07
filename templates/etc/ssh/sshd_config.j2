@@ -22,7 +22,6 @@ ListenAddress {{ address_v6 }}
 
 {% endif %}
 # Ciphers and Keying ---------------------------------------------------------
-# RekeyLimit
 {% if ssh_ciphers is defined %}
 Ciphers {{ ssh_ciphers }}
 {% endif %}
@@ -86,7 +85,7 @@ ChallengeResponseAuthentication {{ sshd_challenge_auth }}
 
 # Kerberos Authentication ----------------------------------------------------
 KerberosAuthentication {{ sshd_kerberos_auth }}
-{% if ansible_distribution != 'Archlinux' %}
+{% if ansible_distribution != 'Archlinux' and ssh_version is version('7.0', '>=', True) %}
 KerberosGetAFSToken {{ sshd_kerberos_get_afs_token }}
 {% endif %}
 KerberosOrLocalPasswd {{ sshd_kerberos_or_local }}

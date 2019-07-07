@@ -13,7 +13,7 @@
     user: "{{ ansible_user | default(ansible_user_id, True) }}"
     state: present
     key: "{{ lookup('file', ssh_deploy_key) }}"
-  when: ssh_deploy_local_key_type | length > 0
+  when: ssh_deploy_key | length > 0
     and sshd_pubkey_auth | bool
 
 - name: Set up sshd configuration in /etc/ssh/sshd_config
