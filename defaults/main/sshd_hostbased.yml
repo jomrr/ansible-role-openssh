@@ -40,8 +40,8 @@ sshd_hostbased_uses_name_from_packet_only: 'no'
 #   path: ssh_host_ecdsa_key
 #   size: 521
 # WARNING: On CentOS 6 and all derivatives like Amazon and Oracle 6
-# only the first entry without size is shown. 
-# Either a stupid mistake I don't see right now, 
+# only the first entry without size is shown.
+# Either a stupid mistake I don't see right now,
 # python <2.7 behavior or a bug. # NEEDS INVESTIGATION
 sshd_host_keys:
   - type: 'rsa'
