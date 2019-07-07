@@ -2,10 +2,10 @@
 # role: ansible-role-ssh
 # file: tasks/sshd.yml
 
-# - name: Start sshd
-#   service:
-#     name: "{{ sshd_service_name }}"
-#     state: started
+- name: Start sshd
+  service:
+    name: "{{ sshd_service_name }}"
+    state: started
 
 - name: Inlcude local pubkey from current user in remote users authorized_keys
   become: false

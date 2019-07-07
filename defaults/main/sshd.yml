@@ -13,7 +13,7 @@ sshd_moduli_minimum: 3072
 
 # force renewal of ssh host keys
 # attenation: existing known_hosts entries become invalid
-sshd_host_key_regenerate: 'no'
+sshd_host_keys_regenerate: 'no'
 
 # create backup of sshd_config file
 sshd_conf_backup: 'no'
