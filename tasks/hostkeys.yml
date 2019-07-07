@@ -18,7 +18,7 @@
     size: "{{ hostkey.size | default(4096) }}"
     state: present
     force: "{{ sshd_host_key_regenerate | bool }}"
-  when: (ssh_hostkey_capability.stdout | int) > 0
+  when: (ssh_hostkey_capability.stdout | int) | default(0, true) > 0
 
 - name: Set permissions for private hostkeys
   file:
