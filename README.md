@@ -2,6 +2,10 @@
 
 Ansible role for setting up openssh.
 
+1. [Supported Platforms](#supported-platforms)
+2. [Requirements](#requirements)
+3. [Defaults and Variables](#defaults-and-variables)
+
 ## Supported Platforms
 
 * Amazon Linux 2
