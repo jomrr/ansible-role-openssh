@@ -30,7 +30,7 @@ Ansible role for setting up openssh.
 
 ## Requirements
 
-Ansible 2.8 or higher is required, as module openssh_keypair is used.
+Ansible 2.7 or higher is required for defaults/main/*.yml to work.
 
 OpenSSH Version 5.7 or above.
 
@@ -93,6 +93,8 @@ ssh_algorithms:
 
 ### defaults/main/ssh.yml
 
+This file is for /etc/ssh/ssh_config default settings.
+
 | variable | default value | description |
 | -------- | ------------- | ----------- |
 | ssh_enabled | True | enable configuration of /etc/ssh/ssh_config |
@@ -115,9 +117,11 @@ ssh_algorithms:
 | ssh_rekey_limit_data | '512M' | rekey limit (data), this is after 512M of data exchanged |
 | ssh_rekey_limit_time | '1800' | rekey limit (time), this is after 1800 seconds |
 | ssh_strict_host_key_checking | 'ask' | enable strict host key checking (known_hosts) |
-| ssh_test_create_key | False | this should be left to False, as it is used for testing only. When true an ssh key is generated for the remote user root and add to his authorized_keys file. In the pytest this is used to perform a login with `ssh -q localhost exit` to check pubkey authentication. |
+| ssh_test_create_key | False | This should be left to False, as it is used for testing only. When True, then an ssh key is generated for the remote user root and added to his authorized_keys file. In the pytest module `test_sshd.py` this is used to perform a login with `ssh -q localhost exit` to check if pubkey authentication is working. |
 
 ### defaults/main/sshd.yml
+
+This file is for general /etc/ssh/sshd_config default settings.
 
 | variable | default value | description |
 | -------- | ------------- | ----------- |
@@ -151,19 +155,20 @@ None.
 
 ## Scenarios and example playbooks
 
-This role by default configures pubkey authentication only, using reasonably secure settings.
+This role by default configures pubkey authentication only, using reasonably secure settings. If you find a flaw, please feel free to comment.
 
 ### Running on localhost
 
 ### Public Key Authentication only for remote host
 
-This one is the easiest, just generate a local ssh key with, if you do not have one:
+This one is the easiest, just generate a local ssh key with
 
 ```shell
 ssh-keygen -t ed25519
 ```
+if you do not have one.
 
-Be sure to adjust the host pattern `ssh-servers`to your needs in your inventory file.
+Be sure to adjust the host pattern `ssh-servers`to a host group defined in your inventory file.
 
 Then you can use a playbook like this to deploy:
 
@@ -177,13 +182,13 @@ Then you can use a playbook like this to deploy:
     - role: ansible-role-ssh
 ```
 
-If you already have an existing key, i.e. an rsa key, change the following variable:
+If you already have an existing rsa key, change the following variable:
 
 ```yaml
 ssh_deploy_key: '~/.ssh/id_rsa.pub'
 ```
 
-You can do this in your inventory or just from the commandline:
+You can do this in your inventory (host or group variable) or just from the commandline:
 
 ```shell
 ansible-playbook site.yml --extra-vars '{"ssh_deploy_key": "~/.ssh/id_rsa.pub"}'
