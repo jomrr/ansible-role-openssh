@@ -5,9 +5,9 @@
 # write default ssh client configuration to /etc/ssh/ssh_conf
 ssh_enabled: True
 
-# deploy local ssh key to remote users authorized_keys file
+# deploy local ssh public key to remote users authorized_keys file
 # when not empty, this is used to identify local key to deploy
-ssh_deploy_local_key_type: 'ed25519'
+ssh_deploy_key: '~/.ssh/id_ed25519.pub'
 
 # create backup of ssh_config file
 ssh_conf_backup: 'no'

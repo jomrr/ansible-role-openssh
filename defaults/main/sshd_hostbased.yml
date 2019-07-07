@@ -36,14 +36,21 @@ sshd_hostbased_uses_name_from_packet_only: 'no'
 #
 # every key not in the list, will be deleted
 # even if sshd_host_key_regenerate = False
-# if you want ecdsa add:
+# if you want to add ecdsa:
 # - type: ecdsa
 #   path: ssh_host_ecdsa_key
+#   size: 521
+# WARNING: On CentOS 6 and all derivatives like Amazon and Oracle 6
+# only the first entry without size is shown. 
+# Either a stupid mistake I don't see right now, 
+# python <2.7 behavior or a bug.
 sshd_host_keys:
-  - type: rsa
+  - type: 'rsa'
     path: '/etc/ssh/ssh_host_rsa_key'
-  - type: ed25519
+    size: 4096
+  - type: 'ed25519'
     path: '/etc/ssh/ssh_host_ed25519_key'
+    size: 256
 
 # HostKeyAlgorithms and HostKeyAccptedTypes are used from
 # ssh_algorithms.keys defined in defaults/main/main.yml

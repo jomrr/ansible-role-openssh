@@ -4,4 +4,4 @@
 
 - name: Import tasks for role ansible-role-ssh
   import_tasks: tasks.yml
-  when: role_ssh_enabled|bool
+  when: role_ssh_enabled | bool

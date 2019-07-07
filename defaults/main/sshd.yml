@@ -15,9 +15,6 @@ sshd_moduli_minimum: 3072
 # attenation: existing known_hosts entries become invalid
 sshd_host_key_regenerate: False
 
-# key length of rsa key
-sshd_rsa_keylength: 4096
-
 # create backup of sshd_config file
 sshd_conf_backup: 'no'
 

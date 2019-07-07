@@ -2,17 +2,45 @@
 # role: ansible-role-ssh
 # file: tasks/hostkeys.yml
 
-- name: Check that {{ hostkey.path }} exist
-  stat:
-    path: "{{ hostkey.path }}"
-  register: hostkey_file
+# - name: Check that {{ hostkey.path }} exist
+#   stat:
+#     path: "{{ hostkey.path }}"
+#   register: hostkey_file
 
-- name: Create {{ hostkey.path }}
-  shell: "set -o pipefail && echo -e 'y' | ssh-keygen -q -t {{ hostkey.type }} -N '' -f {{ hostkey.path }} >/dev/null"
+- name: Check for {{ hostkey.type }} capability
+  shell: "set -o pipefail && strings /usr/sbin/sshd | grep {{ hostkey.type }} | wc -l"
   args:
     executable: /bin/bash
   changed_when: False
-  register: ssh_version
+  register: ssh_hostkey_capability
   check_mode: no
-  when: (not hostkey_file.stat.exists) | bool
-    or (sshd_host_key_regenerate | bool)
+
+- name: Debug sshd_host_keys
+  debug:
+    msg: "{{ sshd_host_keys }}"
+
+- name: Generate {{ hostkey.path }}
+  openssh_keypair:
+    path: "{{ hostkey.path }}"
+    type: "{{ hostkey.type }}"
+    comment: "{{ ansible_fqdn | default(ansible_nodename, true) }}"
+    size: "{{ hostkey.size | default(4096) }}"
+    state: present
+    force: "{{ sshd_host_key_regenerate | bool }}"
+  when: ssh_hostkey_capability.stdout > 0
+
+- name: Set permissions for private hostkeys
+  file:
+    path: "{{ hostkey.path }}"
+    owner: root
+    group: root
+    mode: '0600'
+  when: ssh_hostkey_capability.stdout > 0
+
+- name: Set permissions for public hostkeys
+  file:
+    path: "{{ hostkey.path }}.pub"
+    owner: root
+    group: root
+    mode: '0644'
+  when: ssh_hostkey_capability.stdout > 0

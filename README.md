@@ -15,7 +15,7 @@ Ansible role for setting up openssh.
 
 ## Requirements
 
-Ansible 2.7 or higher is required for defaults/main/*.yml to work.
+Ansible 2.8 or higher is required, as module openssh_keypair is used.
 
 OpenSSH Version 5.7 or above.
 
