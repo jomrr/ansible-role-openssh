@@ -68,6 +68,7 @@ MACs {{ ssh_macs }}
 PasswordAuthentication {{ ssh_password_authentication }}
 PermitLocalCommand no
 Port {{ ssh_port }}
+PreferredAuthentications publickey,keyboard-interactive,password
 Protocol 2
 PubkeyAuthentication {{ ssh_pubkey_authentication }}
 {% if ssh_version is version('7.5', '>=', True) %}
