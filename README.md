@@ -1,4 +1,4 @@
-# ansible-role-ssh
+# ansible-role-ssh [![Build Status](https://travis-ci.org/jam82/ansible-role-ssh.svg?branch=dev)](https://travis-ci.org/jam82/ansible-role-ssh)
 
 Ansible role for setting up openssh.
 
