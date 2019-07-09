@@ -100,7 +100,7 @@ This file is for /etc/ssh/ssh_config default settings.
 | ssh_enabled | True | enable configuration of /etc/ssh/ssh_config |
 | ssh_deploy_key | '~/.ssh/id_ed25519.pub' | local publickey that is added to remote users authorized_keys file, so you do not lock yourself out, because the default configuration of this role is to only allow pubkey authentication. |
 | ssh_conf_backup | 'no' | create a backup when replacing /etc/ssh/ssh_config |
-| ssh_host_config | {} | host specific configuration, for example:</br> <code>ssh_host_config:</br>&nbsp;&nbsp;testhost:</br>&nbsp;&nbsp;&nbsp;&nbsp;X11Forwarding: 'yes'</br>&nbsp;&nbsp;&nbsp;&nbsp;GSSAPIAuthentication: 'yes'</code> |
+| ssh_host_config | {} | host specific configuration, for example:<br/> <code>ssh_host_config:<br/>&nbsp;&nbsp;testhost:<br/>&nbsp;&nbsp;&nbsp;&nbsp;X11Forwarding: 'yes'<br/>&nbsp;&nbsp;&nbsp;&nbsp;GSSAPIAuthentication: 'yes'</code> |
 | ssh_port | '22' | default port ssh tries to connect to |
 | ssh_address_family | 'inet' | address family type |
 | ssh_challenge_response_authentication | 'yes' | Enable challenge response (keyboard-interactive) authentication |
@@ -108,7 +108,7 @@ This file is for /etc/ssh/ssh_config default settings.
 | ssh_global_known_hosts_files | - '/etc/ssh/ssh_known_hosts' | List of global known_host files ssh is looking for |
 | ssh_gssapi_authentication | 'no' | Enable GSSAPI authentication |
 | ssh_hostbased_authentication | 'no' | Enable hostbased authentication |
-| ssh_identity_files | ['\~/.ssh/identity', '\~/.ssh/id_rsa', '\~/.ssh/id_ed25519' ] | where ssh looks for identity files |
+| ssh_identity_files | [ '\~/.ssh/identity', '\~/.ssh/id_rsa', '\~/.ssh/id_ed25519' ] | List of paths where ssh looks for identity files |
 | ssh_password_authentication | 'yes' | Enable password authentication |
 | ssh_pubkey_authentication | 'yes' | Enable public key athentication |
 | ssh_rekey_limit_data | '512M' | Rekey limit (data), this is after 512M of data exchanged |
