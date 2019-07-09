@@ -105,7 +105,6 @@ This file is for /etc/ssh/ssh_config default settings.
 | ssh_address_family | 'inet' | address family type |
 | ssh_challenge_response_authentication | 'yes' | Enable challenge response (keyboard-interactive) authentication |
 | ssh_enable_ssh_keysign | 'no' | Enable ssh-keysign, must be enabled on a client, if you want to do hostbased authentication |
-| ssh_global_known_hosts_files | - '/etc/ssh/ssh_known_hosts' | List of global known_host files ssh is looking for |
 | ssh_gssapi_authentication | 'no' | Enable GSSAPI authentication |
 | ssh_hostbased_authentication | 'no' | Enable hostbased authentication |
 | ssh_identity_files | [ '\~/.ssh/identity', '\~/.ssh/id_rsa', '\~/.ssh/id_ed25519' ] | List of paths where ssh looks for identity files |
@@ -114,7 +113,6 @@ This file is for /etc/ssh/ssh_config default settings.
 | ssh_rekey_limit_data | '512M' | Rekey limit (data), this is after 512M of data exchanged |
 | ssh_rekey_limit_time | '1800' | Rekey limit (time), this is after 1800 seconds |
 | ssh_strict_host_key_checking | 'ask' | Enable strict host key checking (known_hosts) |
-| ssh_user_known_hosts_files | - '.ssh/known_hosts' | List of known_host files, i.e. for central management |
 | ssh_test_create_key | False | This should be left to False, as it is used for testing only. When True, then an ssh key is generated for the remote user root and added to his authorized_keys file. In the pytest module `test_sshd.py` this is used to perform a login with `ssh -q localhost exit` to check if pubkey authentication is working. |
 
 ### defaults/main/sshd.yml
