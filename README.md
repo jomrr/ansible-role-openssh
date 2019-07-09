@@ -98,13 +98,9 @@ This file is for /etc/ssh/ssh_config default settings.
 | variable | default value | description |
 | -------- | ------------- | ----------- |
 | ssh_enabled | True | enable configuration of /etc/ssh/ssh_config |
-| ssh_deploy_key | '~/.ssh/id_ed25519.pub' | Local publickey that is added to remote users authorized_keys file, so you do not lock yourself out, because the default configuration of this role is to only allow pubkey authentication. |
-| ssh_conf_backup | 'no' | Create a backup when replacing /etc/ssh/ssh_config |
-| ssh_host_config | {} | Host specific configuration, for example: |
-|                 |    | `ssh_host_config:` |
-|                 |    | `  testhost:` |
-|                 |    | `    X11Forwarding: 'yes'` |
-|                 |    | `    GSSAPIAuthentication: 'yes'` |
+| ssh_deploy_key | '~/.ssh/id_ed25519.pub' | local publickey that is added to remote users authorized_keys file, so you do not lock yourself out, because the default configuration of this role is to only allow pubkey authentication. |
+| ssh_conf_backup | 'no' | create a backup when replacing /etc/ssh/ssh_config |
+| ssh_host_config | {} | host specific configuration, for example:</br> <code>ssh_host_config:</br>&nbsp;&nbsp;testhost:</br>&nbsp;&nbsp;&nbsp;&nbsp;X11Forwarding: 'yes'</br>&nbsp;&nbsp;&nbsp;&nbsp;GSSAPIAuthentication: 'yes'</code> |
 | ssh_port | '22' | default port ssh tries to connect to |
 | ssh_address_family | 'inet' | address family type |
 | ssh_challenge_response_authentication | 'yes' | Enable challenge response (keyboard-interactive) authentication |
@@ -136,20 +132,45 @@ This file is for general /etc/ssh/sshd_config default settings.
 | sshd_address_family | 'inet' | sshd address family |
 | sshd_listen_addr_v4 | [ "{{ ansible_default_ipv4.address \| default(ansible_all_ipv4_addresses[0]) }}" ] | IPv4 interface addresses sshd binds to |
 | sshd_listen_addr_v6 | [] | IPv6 interface addresses sshd binds to |
-| sshd_login_grace_time | '60' |  |
-| sshd_permit_root_login | 'no' |  |
-| sshd_max_auth_tries | 3 |  |
-| sshd_max_sessions | 3 |  |
-| sshd_pubkey_auth | 'yes' |  |
+
+
 ... and many more tbd.
 
 ### defaults/main/sshd_authentication.yml
 
+| variable | default value | description |
+| -------- | ------------- | ----------- |
+| sshd_login_grace_time | '60' | time to wait for login in seconds |
+| sshd_permit_root_login | 'no' |  |
+| sshd_max_auth_tries | 3 |  |
+| sshd_max_sessions | 3 |  |
+| sshd_pubkey_auth | 'yes' |  |
+| sshd_authorized_keys_file | '%h/.ssh/authorized_keys' | |
+| sshd_password_auth | 'no' | |
+| sshd_challenge_auth | 'no' | |
+| sshd_use_pam | 'yes' | With password and challenge response auth disabled, this runs pam session checks without pam authentication.  |
+| sshd_use_dns | 'yes' | Look up the remote host name and check that the resolved host name or the remote IP address maps back to the very same IP address. |
+
 ### defaults/main/sshd_directives.yml
+
+| variable | default value | description |
+| -------- | ------------- | ----------- |
+| sshd_deny_users | [] | Deny ssh login for listed users. |
+| sshd_allow_users | [] | Allow ssh login for listed users only. |
+| sshd_deny_groups | [] | Deny ssh login for listed groups. |
+| sshd_allow_groups | [] | Allow ssh login for listed groups only. |
+| sshd_per_group_settings | {} | Group specific settings defined via `Match Group` directive. |
+| sshd_per_user_settings | {} | User specific settings defined via `Match User` directive. |
 
 ### defaults/main/sshd_gssapi.yml
 
+| variable | default value | description |
+| -------- | ------------- | ----------- |
+
 ### defaults/main/sshd_kerberos.yml
+
+| variable | default value | description |
+| -------- | ------------- | ----------- |
 
 ## Dependencies
 
