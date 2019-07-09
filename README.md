@@ -23,6 +23,7 @@ Ansible role for setting up openssh.
 * Arch Linux
 * Centos 6, 7
 * Debian 8, 9, 10
+* Raspbian 8, 9, 10
 * OpenSuse Leap 15
 * OpenSuse Tumbleweed
 * Oracle Linux 6, 7
