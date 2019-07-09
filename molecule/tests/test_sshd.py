@@ -8,7 +8,28 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 def test_sshd_active(host):
     # this is testing sshd_config
-    assert host.service("sshd").is_running is True
+    os = host.system_info.distribution
+
+    if os == 'alpine':
+        assert host.service("sshd").is_running is True
+
+    elif os == 'arch':
+        assert host.service("sshd").is_running is True
+
+    elif os == 'centos':
+        assert host.service("sshd").is_running is True
+
+    elif os == 'debian':
+        assert host.service("ssh").is_running is True
+
+    elif os == 'manjaro':
+        assert host.service("sshd").is_running is True
+
+    elif os == 'oracle':
+        assert host.service("sshd").is_running is True
+
+    elif os == 'ubuntu':
+        assert host.service("sshd").is_running is True
 
 
 def test_ssh_login(host):

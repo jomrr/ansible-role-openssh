@@ -1,0 +1,5 @@
+---
+# role: ansible-role-ssh
+# file: vars/Ubuntu.yml
+
+sshd_service_name: sshd
