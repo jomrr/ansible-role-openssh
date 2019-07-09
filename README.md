@@ -98,25 +98,27 @@ This file is for /etc/ssh/ssh_config default settings.
 | variable | default value | description |
 | -------- | ------------- | ----------- |
 | ssh_enabled | True | enable configuration of /etc/ssh/ssh_config |
-| ssh_deploy_key | '~/.ssh/id_ed25519.pub' | local publickey that is added to remote users authorized_keys file, so you do not lock yourself out, because the default configuration of this role is to only allow pubkey authentication. |
-| ssh_conf_backup | 'no' | create a backup when replacing /etc/ssh/ssh_config |
-| ssh_host_config | {} | host specific configuration, for example: |
+| ssh_deploy_key | '~/.ssh/id_ed25519.pub' | Local publickey that is added to remote users authorized_keys file, so you do not lock yourself out, because the default configuration of this role is to only allow pubkey authentication. |
+| ssh_conf_backup | 'no' | Create a backup when replacing /etc/ssh/ssh_config |
+| ssh_host_config | {} | Host specific configuration, for example: |
 |                 |    | `ssh_host_config:` |
 |                 |    | `  testhost:` |
 |                 |    | `    X11Forwarding: 'yes'` |
 |                 |    | `    GSSAPIAuthentication: 'yes'` |
 | ssh_port | '22' | default port ssh tries to connect to |
 | ssh_address_family | 'inet' | address family type |
-| ssh_challenge_response_authentication | 'yes' | enable challenge response (keyboard-interactive) authentication |
-| ssh_enable_ssh_keysign | 'no' | enable ssh-keysign, must be enabled on a client, if you want to do hostbased authentication |
-| ssh_gssapi_authentication | 'no' | enable GSSAPI authentication |
-| ssh_hostbased_authentication | 'no' | enable hostbased authentication |
+| ssh_challenge_response_authentication | 'yes' | Enable challenge response (keyboard-interactive) authentication |
+| ssh_enable_ssh_keysign | 'no' | Enable ssh-keysign, must be enabled on a client, if you want to do hostbased authentication |
+| ssh_global_known_hosts_files | - '/etc/ssh/ssh_known_hosts' | List of global known_host files ssh is looking for |
+| ssh_gssapi_authentication | 'no' | Enable GSSAPI authentication |
+| ssh_hostbased_authentication | 'no' | Enable hostbased authentication |
 | ssh_identity_files | ['\~/.ssh/identity', '\~/.ssh/id_rsa', '\~/.ssh/id_ed25519' ] | where ssh looks for identity files |
-| ssh_password_authentication | 'yes' | enable password authentication |
-| ssh_pubkey_authentication | 'yes' | enable public key athentication |
-| ssh_rekey_limit_data | '512M' | rekey limit (data), this is after 512M of data exchanged |
-| ssh_rekey_limit_time | '1800' | rekey limit (time), this is after 1800 seconds |
-| ssh_strict_host_key_checking | 'ask' | enable strict host key checking (known_hosts) |
+| ssh_password_authentication | 'yes' | Enable password authentication |
+| ssh_pubkey_authentication | 'yes' | Enable public key athentication |
+| ssh_rekey_limit_data | '512M' | Rekey limit (data), this is after 512M of data exchanged |
+| ssh_rekey_limit_time | '1800' | Rekey limit (time), this is after 1800 seconds |
+| ssh_strict_host_key_checking | 'ask' | Enable strict host key checking (known_hosts) |
+| ssh_user_known_hosts_files | - '.ssh/known_hosts' | List of known_host files, i.e. for central management |
 | ssh_test_create_key | False | This should be left to False, as it is used for testing only. When True, then an ssh key is generated for the remote user root and added to his authorized_keys file. In the pytest module `test_sshd.py` this is used to perform a login with `ssh -q localhost exit` to check if pubkey authentication is working. |
 
 ### defaults/main/sshd.yml

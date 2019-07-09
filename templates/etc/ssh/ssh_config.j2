@@ -42,6 +42,19 @@ EnableSSHKeysign {{ ssh_enable_ssh_keysign }}
 EscapeChar ~
 ForwardAgent no
 ForwardX11 no
+{% if ssh_version is version('5.9', '>=', True) %}
+GlobalKnownHostsFile {{ ssh_global_known_hosts_files | join(' ') }}
+UserKnownHostsFile {{ ssh_user_known_hosts_files | join(' ') }}
+{% else %}
+GlobalKnownHostsFile {{ ssh_global_known_hosts_files[0] }}
+{% if ssh_global_known_hosts_files[1] is defined %}
+GlobalKnownHostsFile2 {{ ssh_global_known_hosts_files[1] }}
+{% endif %}
+UserKnownHostsFile {{ ssh_user_known_hosts_files[0] }}
+{% if ssh_user_known_hosts_files[1] is defined %}
+UserKnownHostsFile2 {{ ssh_user_known_hosts_files[1] }}
+{% endif %}
+{% endif %}
 GSSAPIAuthentication {{ ssh_gssapi_authentication }}
 GSSAPIDelegateCredentials no
 {% if ansible_distribution != 'Archlinux' %}

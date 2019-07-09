@@ -37,7 +37,13 @@ sshd_pubkey_auth: 'yes'
 # username of that user. After expansion, AuthorizedKeysFile is taken to be
 # an absolute path or one relative to the user's home directory.
 # The default is ''.ssh/authorized_keys''.
-sshd_authorized_keys_file: '%h/.ssh/authorized_keys'
+
+# See https://www.openssh.com/releasenotes.html, Version 5.9 sshd_config
+
+# for versions prior to 5.9 only the first two entries will be used,
+# as they only support AuthorizedKeysFile and AuthorizedKeysFile2.
+sshd_authorized_keys_files:
+  - '.ssh/authorized_keys'
 
 # Password Authentication ----------------------------------------------------
 

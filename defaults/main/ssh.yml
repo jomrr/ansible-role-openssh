@@ -30,6 +30,11 @@ ssh_challenge_response_authentication: 'yes'
 
 ssh_enable_ssh_keysign: 'no'
 
+# for versions prior to 5.9 only the first two entries will be used,
+# as they only support GlobalKnownHostsFile and GlobalKnownHostsFile2.
+ssh_global_known_hosts_files:
+  - '/etc/ssh/ssh_known_hosts'
+
 ssh_gssapi_authentication: 'no'
 
 ssh_hostbased_authentication: 'no'
@@ -50,6 +55,11 @@ ssh_rekey_limit_time: '1800'
 
 # enable strict hotkey checking in known_hosts
 ssh_strict_host_key_checking: 'ask'
+
+# for versions prior to 5.9 only the first two entries will be used,
+# as they only support UserKnownHostsFile and UserKnownHostsFile2.
+ssh_user_known_hosts_files:
+  - '.ssh/known_hosts'
 
 # TESTING --- variables from here are just for test scenario -----------------
 # travis sometimes has strange behavior, so this is added

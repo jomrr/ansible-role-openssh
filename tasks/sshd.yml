@@ -27,7 +27,7 @@
 
 - name: Set up etc/ssh/ssh_known_hosts
   known_hosts:
-    path: /etc/ssh/ssh_known_hosts
+    path: '/etc/ssh/ssh_known_hosts'
     name: "{{ item.key }}"
     key: "{{ item.value }}"
     state: present
