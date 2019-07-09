@@ -4,5 +4,3 @@
 
 ssh_tools_packages:
   - binutils
-
-sshd_service_name: sshd

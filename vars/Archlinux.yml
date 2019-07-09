@@ -7,3 +7,5 @@ ssh_packages:
 
 sshd_packages:
   - openssh
+
+sshd_service_name: sshd
