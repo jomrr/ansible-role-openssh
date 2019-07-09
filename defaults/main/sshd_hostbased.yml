@@ -8,6 +8,8 @@
 # a good thing to have, but not for beginners, so off by default
 sshd_hostbased_auth: 'no'
 
+sshd_ssh_known_hosts: {}
+
 # ignore users known_hosts file
 sshd_ignore_user_known_hosts: 'yes'
 
