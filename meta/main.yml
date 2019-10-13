@@ -1,0 +1,46 @@
+---
+# role: ansible-role-ssh
+# file: meta/main.yml
+
+galaxy_info:
+  role_name: ansible-role-ssh
+  author: Jonas Mauer
+  description: Ansible role for setting up openssh.
+  company: ''
+
+  # If the issue tracker for your role is not on github, uncomment the
+  # next line and provide a value
+  issue_tracker_url: https://github.com/jam82/ansible-role-ssh/issues
+
+  license: MIT
+
+  min_ansible_version: 2.7
+
+  # If this a Container Enabled role, provide the minimum Ansible Container version.
+  # min_ansible_container_version:
+
+  github_branch: master
+
+  # platforms is a list of platforms, and each platform has a name and a list of versions.
+  #
+  platforms:
+    - name: Archlinux
+      versions:
+        - all
+    - name: CentOS
+      versions:
+        - 6
+        - 7
+        - 8
+    - name: Debian
+      versions:
+        - 8
+        - 9
+        - 10
+    - name: Ubuntu
+      versions:
+        - 16
+        - 18
+  galaxy_tags: []
+
+  dependencies: []
