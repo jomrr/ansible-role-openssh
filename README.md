@@ -2,9 +2,10 @@
 
 Ansible role for setting up openssh.
 
-  - [Supported Platforms](#Supported-Platforms)
-  - [Requirements](#Requirements)
-  - [Defaults and Variables](#Defaults-and-Variables)
+- [ansible-role-ssh ![Build Status](https://travis-ci.org/jam82/ansible-role-ssh)](#ansible-role-ssh-build-statushttpstravis-ciorgjam82ansible-role-ssh)
+  - [Supported Platforms](#supported-platforms)
+  - [Requirements](#requirements)
+  - [Defaults and Variables](#defaults-and-variables)
     - [defaults/main/main.yml](#defaultsmainmainyml)
     - [defaults/main/ssh.yml](#defaultsmainsshyml)
     - [defaults/main/sshd.yml](#defaultsmainsshdyml)
@@ -12,21 +13,23 @@ Ansible role for setting up openssh.
     - [defaults/main/sshd_directives.yml](#defaultsmainsshddirectivesyml)
     - [defaults/main/sshd_gssapi.yml](#defaultsmainsshdgssapiyml)
     - [defaults/main/sshd_kerberos.yml](#defaultsmainsshdkerberosyml)
-  - [Dependencies](#Dependencies)
-  - [Scenarios and example playbooks](#Scenarios-and-example-playbooks)
-  - [License and Author](#License-and-Author)
-  - [References](#References)
+  - [Dependencies](#dependencies)
+  - [Scenarios and example playbooks](#scenarios-and-example-playbooks)
+    - [Running on localhost](#running-on-localhost)
+    - [Public Key Authentication only for remote host](#public-key-authentication-only-for-remote-host)
+  - [License and Author](#license-and-author)
+  - [References](#references)
 
 ## Supported Platforms
 
-* Amazon Linux 2
-* Arch Linux
-* Centos 6, 7
-* Debian 8, 9, 10
-* Raspbian 8, 9, 10
-* OpenSuse Leap 15
-* Oracle Linux 6, 7
-* Ubuntu 16.04, 18.04
+- Amazon Linux 2
+- Arch Linux
+- Centos 6, 7
+- Debian 8, 9, 10
+- Raspbian 8, 9, 10
+- OpenSuse Leap 15
+- Oracle Linux 6, 7
+- Ubuntu 16.04, 18.04
 
 ## Requirements
 
@@ -38,14 +41,14 @@ OpenSSH Version 5.7 or above.
 
 The default values for all variables are stored in the following files:
 
-* defaults/main/main.yml
-* defaults/main/ssh.yml
-* defaults/main/sshd.yml
-* defaults/main/sshd_authentication.yml
-* defaults/main/sshd_directives.yml
-* defaults/main/sshd_gssapi.yml
-* defaults/main/sshd_hostbased.yml
-* defaults/main/sshd_kerberos.yml
+- defaults/main/main.yml
+- defaults/main/ssh.yml
+- defaults/main/sshd.yml
+- defaults/main/sshd_authentication.yml
+- defaults/main/sshd_directives.yml
+- defaults/main/sshd_gssapi.yml
+- defaults/main/sshd_hostbased.yml
+- defaults/main/sshd_kerberos.yml
 
 ### defaults/main/main.yml
 
@@ -131,7 +134,6 @@ This file is for general /etc/ssh/sshd_config default settings.
 | sshd_listen_addr_v4 | [ "{{ ansible_default_ipv4.address \| default(ansible_all_ipv4_addresses[0]) }}" ] | IPv4 interface addresses sshd binds to |
 | sshd_listen_addr_v6 | [] | IPv6 interface addresses sshd binds to |
 
-
 ... and many more tbd.
 
 ### defaults/main/sshd_authentication.yml
@@ -187,6 +189,7 @@ This one is the easiest, just generate a local ssh key with
 ```shell
 ssh-keygen -t ed25519
 ```
+
 if you do not have one.
 
 Be sure to adjust the host pattern `ssh-servers`to a host group defined in your inventory file.
@@ -217,21 +220,21 @@ ansible-playbook site.yml --extra-vars '{"ssh_deploy_key": "~/.ssh/id_rsa.pub"}'
 
 ## License and Author
 
-* Author:: Jonas Mauer (<jam@kabelmail.net>)
-* Copyright:: 2019, Jonas Mauer
+- Author:: Jonas Mauer (<jam@kabelmail.net>)
+- Copyright:: 2019, Jonas Mauer
 
 Licensed under MIT License;
 See LICENSE file in repository.
 
 ## References
 
-* [FreeBSD Manual Pages - sshd_config\(5\)](https://www.freebsd.org/cgi/man.cgi?sshd_config)
-* [Uni Konstanz - Starke Authentifizioerungsmethoden](https://www.kim.uni-konstanz.de/e-mail-und-internet/it-sicherheit-und-privatsphaere/sicherer-server-it-dienst/linux-fernadministration-mit-pam-und-ssh/starke-authentifizierungsmethoden/)
-* [SSH absichern - Stephan Klein](https://klein-gedruckt.de/2015/04/ssh-absichern/)
-* [OpenSSH Tip: Check Syntax Errors before Restarting SSHD Server](https://www.cyberciti.biz/tips/checking-openssh-sshd-configuration-syntax-errors.html)
-* [BetterCrypto.org: OpenSSH](https://bettercrypto.org/#_openssh)
-* [Abe Singer - Hostbased SSH](https://www.usenix.org/system/files/login/articles/09_singer.pdf)
-* [DNS-based SSH host key verification](https://ayesh.me/sshfp-verification)
-* [Hardening SSH](https://medium.com/@jasonrigden/hardening-ssh-1bcb99cd4cef)
-* [How to create an SSH certificate authority](https://jameshfisher.com/2018/03/16/how-to-create-an-ssh-certificate-authority/)
-* [SSH Host Key Signing - ein unterschätztes Feature](https://www.sipgate.de/blog/ssh-host-key-signing-ein-unterschaetztes-feature)
+- [FreeBSD Manual Pages - sshd_config\(5\)](https://www.freebsd.org/cgi/man.cgi?sshd_config)
+- [Uni Konstanz - Starke Authentifizioerungsmethoden](https://www.kim.uni-konstanz.de/e-mail-und-internet/it-sicherheit-und-privatsphaere/sicherer-server-it-dienst/linux-fernadministration-mit-pam-und-ssh/starke-authentifizierungsmethoden/)
+- [SSH absichern - Stephan Klein](https://klein-gedruckt.de/2015/04/ssh-absichern/)
+- [OpenSSH Tip: Check Syntax Errors before Restarting SSHD Server](https://www.cyberciti.biz/tips/checking-openssh-sshd-configuration-syntax-errors.html)
+- [BetterCrypto.org: OpenSSH](https://bettercrypto.org/#_openssh)
+- [Abe Singer - Hostbased SSH](https://www.usenix.org/system/files/login/articles/09_singer.pdf)
+- [DNS-based SSH host key verification](https://ayesh.me/sshfp-verification)
+- [Hardening SSH](https://medium.com/@jasonrigden/hardening-ssh-1bcb99cd4cef)
+- [How to create an SSH certificate authority](https://jameshfisher.com/2018/03/16/how-to-create-an-ssh-certificate-authority/)
+- [SSH Host Key Signing - ein unterschätztes Feature](https://www.sipgate.de/blog/ssh-host-key-signing-ein-unterschaetztes-feature)
