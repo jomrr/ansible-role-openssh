@@ -1,4 +1,4 @@
-# ansible-role-ssh [![Build Status](https://travis-ci.org/jam82/ansible-role-ssh.svg?branch=dev)](https://travis-ci.org/jam82/ansible-role-ssh)
+# ansible-role-ssh [![Build Status](https://travis-ci.org/jam82/ansible-role-ssh.svg?branch=master)](https://travis-ci.org/jam82/ansible-role-ssh)
 
 Ansible role for setting up openssh.
 
@@ -208,7 +208,7 @@ Then you can use a playbook like this to deploy:
 # play: test-site
 # file: site.yml
 
-- hosts: ssh-servers
+- hosts: ssh_servers
   roles:
     - role: ansible-role-ssh
 ```
