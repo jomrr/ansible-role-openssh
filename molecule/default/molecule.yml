@@ -63,7 +63,7 @@ verifier:
     PYTHONWARNINGS: "ignore"
   directory: ../tests
   options:
-    v: true
-    sudo: true
+    v: True
+    sudo: True
   lint:
     name: flake8

@@ -27,7 +27,7 @@ platforms:
     box: "generic/ubuntu1804"
 provisioner:
   name: ansible
-  log: true
+  log: True
   lint:
     name: ansible-lint
   playbooks:
@@ -36,7 +36,7 @@ provisioner:
   inventory:
     group_vars:
       all:
-        role_ssh_enabled: true
+        role_ssh_enabled: True
 scenario:
   name: kvm
 verifier:
@@ -45,7 +45,7 @@ verifier:
     PYTHONWARNINGS: "ignore"
   directory: ../tests
   options:
-    v: true
-    sudo: true
+    v: True
+    sudo: True
   lint:
     name: flake8
