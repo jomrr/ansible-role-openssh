@@ -2,7 +2,7 @@
 
 Ansible role for setting up openssh.
 
-- [ansible-role-ssh ![Build Status](https://travis-ci.org/jam82/ansible-role-ssh)](#ansible-role-ssh-build-statushttpstravis-ciorgjam82ansible-role-ssh)
+- **ansible-role-ssh**
   - [Supported Platforms](#supported-platforms)
   - [Requirements](#requirements)
   - [Defaults and Variables](#defaults-and-variables)
@@ -103,7 +103,7 @@ This file is for /etc/ssh/ssh_config default settings.
 | ssh_enabled | True | enable configuration of /etc/ssh/ssh_config |
 | ssh_deploy_key | '~/.ssh/id_ed25519.pub' | local publickey that is added to remote users authorized_keys file, so you do not lock yourself out, because the default configuration of this role is to only allow pubkey authentication. |
 | ssh_conf_backup | 'no' | create a backup when replacing /etc/ssh/ssh_config |
-| ssh_host_config | {} | host specific configuration, for example:<br/> <code>ssh_host_config:<br/>&nbsp;&nbsp;testhost:<br/>&nbsp;&nbsp;&nbsp;&nbsp;X11Forwarding: 'yes'<br/>&nbsp;&nbsp;&nbsp;&nbsp;GSSAPIAuthentication: 'yes'</code> |
+| ssh_host_config | {} | host specific configuration, see example after table. |
 | ssh_port | '22' | default port ssh tries to connect to |
 | ssh_address_family | 'inet' | address family type |
 | ssh_challenge_response_authentication | 'yes' | Enable challenge response (keyboard-interactive) authentication |
@@ -117,6 +117,13 @@ This file is for /etc/ssh/ssh_config default settings.
 | ssh_rekey_limit_time | '1800' | Rekey limit (time), this is after 1800 seconds |
 | ssh_strict_host_key_checking | 'ask' | Enable strict host key checking (known_hosts) |
 | ssh_test_create_key | False | This should be left to False, as it is used for testing only. When True, then an ssh key is generated for the remote user root and added to his authorized_keys file. In the pytest module `test_sshd.py` this is used to perform a login with `ssh -q localhost exit` to check if pubkey authentication is working. |
+
+```yaml
+ssh_host_config:
+  testhost.example.com:
+    X11Forwarding: 'yes'
+    GSSAPIAuthentication: 'yes'
+```
 
 ### defaults/main/sshd.yml
 
