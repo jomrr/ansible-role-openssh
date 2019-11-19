@@ -24,11 +24,11 @@ Ansible role for setting up openssh.
 
 - Amazon Linux 2
 - Archlinux
-- Centos 7, 8
-- Debian 9, 10
-- Raspbian 9, 10
+- Centos 6, 7, 8
+- Debian 8, 9, 10
+- Raspbian 8, 9, 10
 - OpenSuse Leap 15
-- Oracle Linux 7, 8
+- Oracle Linux 6, 7, 8
 - Ubuntu 16.04, 18.04
 
 ## Requirements
