@@ -92,7 +92,7 @@ ChallengeResponseAuthentication {{ sshd_challenge_auth }}
 # Kerberos Authentication ----------------------------------------------------
 AuthorizedPrincipalsFile none
 KerberosAuthentication {{ sshd_kerberos_auth }}
-{% if ansible_distribution != 'Archlinux' and ssh_version is version('7.0', '>=', True) %}
+{% if ansible_distribution != 'Archlinux' and ansible_os_family != 'Debian' and ssh_version is version('7.0', '>=', True) %}
 KerberosGetAFSToken {{ sshd_kerberos_get_afs_token }}
 {% endif %}
 KerberosOrLocalPasswd {{ sshd_kerberos_or_local }}
