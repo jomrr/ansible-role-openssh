@@ -27,7 +27,7 @@ platforms:
     box: "generic/ubuntu1804"
 provisioner:
   name: ansible
-  log: true
+  log: True
   lint:
     name: ansible-lint
   playbooks:
@@ -45,7 +45,7 @@ verifier:
     PYTHONWARNINGS: "ignore"
   directory: ../tests
   options:
-    v: true
-    sudo: true
+    v: True
+    sudo: True
   lint:
     name: flake8
