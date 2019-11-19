@@ -1,7 +1,6 @@
 ---
 # role: ansible-role-vscode
-# file: molecule/kvm/prepare.yml
-
+# file: molecule/podman/prepare.yml
 - name: Prepare
   hosts: all
   gather_facts: True
