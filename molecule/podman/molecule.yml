@@ -1,28 +1,29 @@
 ---
-# role: ansible-role-ssh
-# file: molecule/kvm/molecule.yml
+# role: ansible-role-vscode
+# file: molecule/default/molecule.yml
 
 dependency:
   name: galaxy
 driver:
-  name: docker
+  name: podman
 lint:
   name: yamllint
   options:
     config-file: molecule/shared/yamllint.yml
 platforms:
   - name: ssh-default
-    image: ${MOLECULE_DIST:-"jam82/ubuntu-molecule:18.04"}
+    image: ${MOLECULE_DIST:-"jam82/centos-molecule:8"}
     command: ${MOLECULE_DOCKER_CMD:-""}
-    pre_build_image: true
-    privileged: true
+    pre_build_image: True
+    tty: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
 provisioner:
   name: ansible
-  log: true
-  options:
-    vvv: False
+  log: True
   lint:
     name: ansible-lint
   playbooks:
@@ -48,17 +49,7 @@ provisioner:
             HostbasedAuthentication: 'yes'
             GSSAPIAuthentication: 'yes'
 scenario:
-  name: default
-  test_sequence:
-    - lint
-    - destroy
-    - syntax
-    - create
-    - prepare
-    - converge
-    - idempotence
-    - verify
-    - destroy
+  name: podman
 verifier:
   name: testinfra
   env:
