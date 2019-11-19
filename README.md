@@ -54,7 +54,7 @@ The file main.yml contains variables with defaults values that affect both, ssh 
 
 | variable | default value | description |
 | -------- | ------------- | ----------- |
-| role_ssh_enabled | false | determine whether role is enabled (true) or not (false) |
+| ssh_enabled | false | determine whether role is enabled (true) or not (false) |
 
 The set of allowed algorithms is stored in the dict ssh_algorithms and is used to intersect with the detected supported algorithms:
 
