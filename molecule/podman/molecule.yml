@@ -11,8 +11,8 @@ lint:
   options:
     config-file: molecule/shared/yamllint.yml
 platforms:
-  - name: vscode-default
-    image: ${MOLECULE_DIST:-"jam82/arch-molecule:latest"}
+  - name: ssh-default
+    image: ${MOLECULE_DIST:-"jam82/centos-molecule:8"}
     command: ${MOLECULE_DOCKER_CMD:-""}
     pre_build_image: True
     tty: True
@@ -27,6 +27,7 @@ provisioner:
   lint:
     name: ansible-lint
   playbooks:
+    prepare: ../shared/prepare.yml
     converge: ../shared/playbook.yml
   inventory:
     group_vars:

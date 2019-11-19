@@ -79,13 +79,6 @@ platforms:
     privileged: True
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  # - name: ssh-suse-tumbleweed
-  #   image: "jam82/suse-molecule:tumbleweed"
-  #   command: "/usr/lib/systemd/systemd"
-  #   pre_build_image: True
-  #   privileged: True
-  #   volumes:
-  #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-oracle6
     image: "jam82/oracle-molecule:6"
     command: "/sbin/init"
@@ -134,6 +127,7 @@ provisioner:
   lint:
     name: ansible-lint
   playbooks:
+    prepare: ../shared/prepare.yml
     converge: ../shared/playbook.yml
   inventory:
     group_vars:
