@@ -42,7 +42,7 @@
   package:
     name: "{{ ssh_binutils_package }}"
     state: present
-  when: ssh_version is version('6.3', '<')
+  when: ssh_version is version("{{ ssh_q_version }}", '<')
 
 - name: "Check if {{ sshd_moduli_file }} contains weak DH parameters"
   shell: awk '$5 < {{ sshd_moduli_minimum }}' {{ sshd_moduli_file }}
