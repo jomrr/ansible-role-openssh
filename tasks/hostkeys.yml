@@ -8,20 +8,30 @@
 # 2. openssh_keypair module is not idempotent, the return value 'size' is the desired,
 # not the current key size, so you cannot replace when different size as desired...
 
-- name: Check for {{ hostkey.type }} capability
+- name: "Check for {{ hostkey.type }} capability"
   shell: "set -o pipefail && strings /usr/sbin/sshd | grep {{ hostkey.type }} | wc -l"
   args:
     executable: /bin/bash
   changed_when: False
   register: ssh_hostkey_capability
   check_mode: no
+  when: ssh_version is version('6.3', '<')
 
-- name: Check if host {{ hostkey.path }} exists
+- name: "Check for {{ hostkey.type }} capability"
+  shell: "set -o pipefail && ssh -Q key | grep {{ hostkey.type }} | wc -l"
+  args:
+    executable: /bin/bash
+  changed_when: False
+  register: ssh_hostkey_capability
+  check_mode: no
+  when: ssh_version is version('6.3', '>=')
+
+- name: "Check if host {{ hostkey.path }} exists"
   stat:
     path: "{{ hostkey.path }}"
   register: hostkey_file
 
-- name: Create {{ hostkey.path }} if it does not exist
+- name: "Create {{ hostkey.path }} if it does not exist"
   shell: |
     set -o pipefail && echo -e 'y' | \
     ssh-keygen -q \
@@ -36,7 +46,7 @@
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
     and (not hostkey_file.stat.exists) | bool
 
-- name: Check {{ hostkey.path }} size
+- name: "Check {{ hostkey.path }} size"
   shell: "set -o pipefail && ssh-keygen -l -f {{ hostkey.path }} | awk '{ print $1 }'"
   args:
     executable: /bin/bash
@@ -45,7 +55,7 @@
   check_mode: no
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
 
-- name: Recreate {{ hostkey.path }} if it has a wrong size or forced
+- name: "Recreate {{ hostkey.path }} if it has a wrong size or forced"
   shell: |
     set -o pipefail && echo -e 'y' | \
     ssh-keygen -q \
@@ -61,7 +71,7 @@
     and (ssh_hostkey_size.stdout | int | default(0, true) != (hostkey.size | default(4096, true))
     or sshd_host_keys_regenerate | bool)
 
-- name: Set permissions for private hostkeys
+- name: "Set permissions for private hostkeys"
   file:
     path: "{{ hostkey.path }}"
     owner: root
@@ -69,7 +79,7 @@
     mode: '0600'
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
 
-- name: Set permissions for public hostkeys
+- name: "Set permissions for public hostkeys"
   file:
     path: "{{ hostkey.path }}.pub"
     owner: root
