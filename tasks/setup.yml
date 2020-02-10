@@ -2,7 +2,7 @@
 # role: ansible-role-ssh
 # file: tasks/setup.yml
 
-- name: Install ssh client packages
+- name: "Install ssh client packages"
   package:
     name: "{{ ssh_package }}"
     state: present
@@ -12,7 +12,7 @@
   when: ssh_enabled | bool
     or sshd_enabled | bool
 
-- name: Install ssh server packages
+- name: "Install ssh server packages"
   package:
     name: "{{ sshd_package }}"
     state: present
@@ -21,7 +21,7 @@
     loop_var: sshd_package
   when: sshd_enabled | bool
 
-- name: Determine ssh version
+- name: "Determine ssh version"
   shell: set -o pipefail && ssh -V 2>&1 | sed -r "s/.*_([0-9.]*).*\s{1}.*/\1/"
   args:
     executable: /bin/bash
@@ -29,24 +29,28 @@
   register: ssh_version_out
   check_mode: no
 
-- name: Set fact ssh_version
+- name: "Set fact ssh_version"
   set_fact:
     ssh_version: "{{ ssh_version_out.stdout }}"
 
+- name: "Print openssh version"
+  debug:
+    msg: "ssh version: {{ ssh_version }}"
+
 # binutils are needed below ssh 6.3, because -Q option is not available.
-- name: Install binutils for algorithm extraction
+- name: "Install binutils for algorithm extraction"
   package:
     name: "{{ ssh_binutils_package }}"
     state: present
-  when: ssh_version is version('6.3', '<', True)
+  when: ssh_version is version('6.3', '<')
 
-- name: Check if {{ sshd_moduli_file }} contains weak DH parameters
+- name: "Check if {{ sshd_moduli_file }} contains weak DH parameters"
   shell: awk '$5 < {{ sshd_moduli_minimum }}' {{ sshd_moduli_file }}
   register: sshd_register_moduli
   changed_when: false
   check_mode: no
 
-- name: Remove primes smaller than {{ sshd_moduli_minimum }}
+- name: "Remove primes smaller than {{ sshd_moduli_minimum }}"
   shell: |
     awk '$5 >= {{ sshd_moduli_minimum }}' {{ sshd_moduli_file }} > \
     {{ sshd_moduli_file }}.new
