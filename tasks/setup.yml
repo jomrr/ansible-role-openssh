@@ -2,14 +2,24 @@
 # role: ansible-role-ssh
 # file: tasks/setup.yml
 
+- name: Determine ssh version
+  shell: set -o pipefail && ssh -V 2>&1 | sed -r "s/.*_([0-9.]*).*\s{1}.*/\1/"
+  args:
+    executable: /bin/bash
+  changed_when: False
+  register: ssh_version_out
+  check_mode: no
+
+- name: Set fact ssh_version
+  set_fact:
+    ssh_version: "{{ ssh_version_out.stdout }}"
+
 # binutils are needed below ssh 6.3, because -Q option is not available.
 - name: Install binutils for algorithm extraction
   package:
-    name: "{{ ssh_tools_package }}"
+    name: "{{ ssh_binutils_package }}"
     state: present
-  loop: "{{ ssh_tools_packages }}"
-  loop_control:
-    loop_var: ssh_tools_package
+  when: ssh_version is version('6.3', '<', True)
 
 - name: Install ssh client packages
   package:
