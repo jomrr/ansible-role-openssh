@@ -8,7 +8,7 @@
     state: started
 
 - name: Inlcude local pubkey from current user in remote users authorized_keys
-  become: false
+  become: False
   authorized_key:
     user: "{{ ansible_user | default(ansible_user_id, True) }}"
     state: present
