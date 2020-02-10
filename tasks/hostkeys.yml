@@ -15,7 +15,7 @@
   changed_when: False
   register: ssh_hostkey_capability
   check_mode: no
-  when: ssh_version is version("{{ ssh_q_version }}", '<')
+  when: ssh_version is version(ssh_q_version, '<')
 
 - name: "Check for {{ hostkey.type }} capability"
   shell: "set -o pipefail && ssh -Q key | grep {{ hostkey.type }} | wc -l"
@@ -24,7 +24,7 @@
   changed_when: False
   register: ssh_hostkey_capability
   check_mode: no
-  when: ssh_version is version("{{ ssh_q_version }}", '>=')
+  when: ssh_version is version(ssh_q_version, '>=')
 
 - name: "Check if host {{ hostkey.path }} exists"
   stat:

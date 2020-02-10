@@ -2,7 +2,7 @@
 # role: ansible-role-ssh
 # file: vars/main.yml
 
-# if version is smaller than specified, 
+# if version is smaller than specified,
 # binutils is needed for algorithm detection, as -Q does not work.
 # Debian 8 openssh 6.7 seems broken, it reports kex algos it does not support.
 # so we switch to smaller than 6.8 for -Q.
