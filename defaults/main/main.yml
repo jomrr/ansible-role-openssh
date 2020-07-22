@@ -4,7 +4,7 @@
 
 # The role is disabled by default, so you do not get in trouble.
 # Checked in tasks/main.yml which includes tasks.yml if enabled.
-ssh_enabled: False
+ssh_enabled: false
 
 # algorithms considered to be usable and secure.
 # this list is used to filter the available algorithms on the

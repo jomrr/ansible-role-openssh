@@ -54,4 +54,4 @@ ssh_strict_host_key_checking: 'ask'
 # TESTING --- variables from here are just for test scenario -----------------
 # travis sometimes has strange behavior, so this is added
 # create ssh keypair for ansible user
-ssh_test_create_key: False
+ssh_test_create_key: false
