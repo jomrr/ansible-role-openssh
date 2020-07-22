@@ -1,172 +1,200 @@
 ---
 # role: ansible-role-ssh
-# file: molecule/kvm/molecule.yml
+# file: molecule/all/molecule.yml
 
 dependency:
   name: galaxy
+  options:
+    role-file: ../requirements.yml
 driver:
   name: docker
-lint:
-  name: yamllint
-  options:
-    config-file: molecule/shared/yamllint.yml
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8
 platforms:
-  - name: ssh-amazon
-    image: "jam82/amazon-molecule:latest"
-    command: "/usr/lib/systemd/systemd"
+  - name: ssh-alpine311
+    image: "jam82/molecule-alpine:3.11"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
+  - name: ssh-alpine
+    image: "jam82/molecule-alpine:latest"
+    override_command: False
+    pre_build_image: True
+    privileged: True
+    tmpfs:
+      - /tmp
+      - /run
+  - name: ssh-amazonlinux
+    image: "jam82/molecule-amazonlinux:latest"
+    override_command: False
+    pre_build_image: True
+    privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-arch
-    image: "jam82/arch-molecule:latest"
-    command: "/usr/lib/systemd/systemd"
+    image: "jam82/molecule-archlinux:latest"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-centos6
-    image: "jam82/centos-molecule:6"
-    command: "/sbin/init"
-    pre_build_image: True
-    privileged: True
   - name: ssh-centos7
-    image: "jam82/centos-molecule:7"
-    command: "/usr/lib/systemd/systemd"
+    image: "jam82/molecule-centos:7"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-debian8
-    image: "jam82/debian-molecule:8"
-    command: "/lib/systemd/systemd"
+  - name: ssh-centos8
+    image: "jam82/molecule-centos:8"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-debian9
-    image: "jam82/debian-molecule:9"
-    command: "/lib/systemd/systemd"
+    image: "jam82/molecule-debian:9"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-debian10
-    image: "jam82/debian-molecule:10"
-    command: "/lib/systemd/systemd"
+    image: "jam82/molecule-debian:10"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-debian
-    image: "jam82/debian-molecule:latest"
-    command: "/lib/systemd/systemd"
+  - name: ssh-fedora
+    image: "jam82/molecule-fedora:32"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-suse15
-    image: "jam82/suse-molecule:15"
-    command: "/usr/lib/systemd/systemd"
+  - name: ssh-opensuse15
+    image: "jam82/molecule-opensuse:15"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-suse
-    image: "jam82/suse-molecule:latest"
-    command: "/usr/lib/systemd/systemd"
+  - name: ssh-opensuse-tumbleweed
+    image: "jam82/molecule-opensuse:tumbleweed"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-oracle6
-    image: "jam82/oracle-molecule:6"
-    command: "/sbin/init"
+  - name: ssh-oraclelinux7
+    image: "jam82/molecule-oraclelinux:7"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-oracle7
-    image: "jam82/oracle-molecule:7"
-    command: "/usr/lib/systemd/systemd"
+  - name: ssh-oraclelinux8
+    image: "jam82/molecule-oraclelinux:8"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-oracle
-    image: "jam82/oracle-molecule:latest"
-    command: "/usr/lib/systemd/systemd"
+  - name: ssh-oraclelinux
+    image: "jam82/molecule-oraclelinux:latest"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-ubuntu1604
-    image: "jam82/ubuntu-molecule:16.04"
-    command: "/lib/systemd/systemd"
+    image: "jam82/molecule-ubuntu:16.04"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-ubuntu1804
-    image: "jam82/ubuntu-molecule:18.04"
-    command: "/lib/systemd/systemd"
+    image: "jam82/molecule-ubuntu:18.04"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-ubuntu
-    image: "jam82/ubuntu-molecule:latest"
-    command: "/lib/systemd/systemd"
+  - name: ssh-ubuntu2004
+    image: "jam82/molecule-ubuntu:20.04"
+    override_command: False
     pre_build_image: True
     privileged: True
+    tmpfs:
+      - /tmp
+      - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
 provisioner:
   name: ansible
   log: True
-  lint:
-    name: ansible-lint
   playbooks:
-    prepare: ../shared/prepare.yml
-    converge: ../shared/playbook.yml
+    prepare: ../resources/playbooks/prepare.yml
+    converge: ../resources/playbooks/converge.yml
   inventory:
     group_vars:
       all:
-        ssh_enabled: True
-        ssh_deploy_key: ''
-        sshd_listen_addr_v4: ['0.0.0.0']
-        sshd_permit_root_login: 'yes'
-        ssh_test_create_key: True
-        ssh_strict_host_key_checking: 'no'
-        ssh_enable_ssh_keysign: 'yes'
-        sshd_hostbased_auth: 'yes'
-        sshd_shosts_equiv:
-          test.example.com: 'testuser'
-        sshd_ssh_known_hosts:
-          test.example.com: 'test.example.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAgEA1WuHeYhSq0sw6y9iRId7yWpTlcpbyeCOMWYq1ht86DIs2jGRxvkOYxnMQmVsevl2ckuQPAIKgm03bPS1PHYHtRDe72gI90PFtW96fZLn9dsh3HYB6+Bx//aVJ7r3LdLMJr8tcGO378x/hjy01AxbAJJGDGcPecngbffCeDHVdXPpvm88GgPyMtUPaLbFOA5Eq0UyVxQrFj/1iA0Ufy6hDzoyMrg7kK6Bwt2Oa9BoIEM7Y3UqkvANBxlVuO2ChijPgma6aYiL0zN12WBDuwkP5Add/8Q2bTGsMtTGCXAB1UzULwMiFM2JLXwZ74lapd2ZHc/K+oPCT+qq6hND8uUfTMJgSyCVAqavT2x1qaWiVJ3SU2hT7SxjnKekaj/GjBPTbyEWyWDApHQSv4B8ArbLz8AB4FKRvXdG+G5wh1vr0N/cpknIB4VtJWOj4IMfoILNfHfFv/eBUTINpSuZNd0/E7YwR4P+dDMUQB0QPbK7iVBKVCTffgd3GgANUA6rg/FloxOMmitXutCmQPZu4XaL3dq4C7potEH5XPIHvnKeRJtitxOgb1M9B4ulrVspO+sgJRq6ZzJzBECIIhcIJ59RktpPZ1pa4A8wtgoLE0qWxOdkpKTckVHJhYU18UQ1rKaOEKd4upEZSjwGTf4xEDwyKqrc+YBg6ZOTELLRPsdZxSc='
-        ssh_host_config:
-          '*.example.com':
-            HostbasedAuthentication: 'yes'
-            GSSAPIAuthentication: 'yes'
-scenario:
-  name: all
-  test_sequence:
-    - lint
-    - destroy
-    - syntax
-    - create
-    - prepare
-    - converge
-    - idempotence
-    - verify
-    - destroy
+        ssh_role_enabled: True
 verifier:
   name: testinfra
   env:
     PYTHONWARNINGS: "ignore"
-  directory: ../tests
+  directory: ../resources/tests
   options:
     v: True
     sudo: True
-  lint:
-    name: flake8

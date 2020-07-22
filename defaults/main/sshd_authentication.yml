@@ -4,8 +4,19 @@
 
 # Authentication Methods and Settings ----------------------------------------
 
-# available authentication methods
-# sshd_authentication_methods:
+# authentication methods
+# Specifies the authentication methods that must be successfully
+# completed for a user is granted	access.
+# The available authentication methods are: "gssapi-with-mic",
+# "hostbased", "keyboard-interactive", "none" (used for access to
+# password-less accounts when PermitEmptyPasswords is enabled),
+# "password"	and "publickey".
+#
+# Example: pubkey and password or pubkey and hostbased required
+#
+# sshd_authentication_methods: "publickey,password publickey,hostbased"
+#
+sshd_authentication_methods: "publickey"
 
 # The server disconnects after this time if the user has not successfully
 # logged in. If the value is 0, there is no time limit.

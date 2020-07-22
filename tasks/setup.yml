@@ -3,31 +3,22 @@
 # file: tasks/setup.yml
 
 # binutils are needed below ssh 6.3, because -Q option is not available.
-- name: Install binutils for algorithm extraction
-  package:
-    name: "{{ ssh_tools_package }}"
-    state: present
-  loop: "{{ ssh_tools_packages }}"
-  loop_control:
-    loop_var: ssh_tools_package
+# - name: Install binutils for algorithm extraction
+#   package:
+#     name: "{{ ssh_tools_packages }}"
+#     state: present
 
 - name: Install ssh client packages
   package:
-    name: "{{ ssh_package }}"
+    name: "{{ ssh_packages }}"
     state: present
-  loop: "{{ ssh_packages }}"
-  loop_control:
-    loop_var: ssh_package
   when: ssh_enabled | bool
     or sshd_enabled | bool
 
 - name: Install ssh server packages
   package:
-    name: "{{ sshd_package }}"
+    name: "{{ sshd_packages }}"
     state: present
-  loop: "{{ sshd_packages }}"
-  loop_control:
-    loop_var: sshd_package
   when: sshd_enabled | bool
 
 - name: Check if {{ sshd_moduli_file }} contains weak DH parameters

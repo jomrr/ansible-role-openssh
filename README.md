@@ -24,18 +24,19 @@ Ansible role for setting up openssh.
 
 - Amazon Linux 2
 - Archlinux
-- Centos 6, 7, 8
-- Debian 8, 9, 10
-- Raspbian 8, 9, 10
+- Centos 7, 8
+- Debian 9, 10
+- Raspbian 9, 10
 - OpenSuse Leap 15
-- Oracle Linux 6, 7, 8
-- Ubuntu 16.04, 18.04
+- OpenSuse Tumbleweed
+- Oracle Linux 7, 8
+- Ubuntu 16.04, 18.04, 20.04
 
 ## Requirements
 
 Ansible 2.7 or higher is required for defaults/main/*.yml to work.
 
-OpenSSH Version 5.7 or above.
+OpenSSH Version 6.3 or above for `ssh -Q` to work.
 
 ## Defaults and Variables
 
@@ -81,11 +82,9 @@ ssh_algorithms:
     - ssh-ed25519-cert-v01@openssh.com
     - rsa-sha2-512-cert-v01@openssh.com
     - rsa-sha2-256-cert-v01@openssh.com
-    - ssh-rsa-cert-v01@openssh.com
     - ssh-ed25519
     - rsa-sha2-512
     - rsa-sha2-256
-    - ssh-rsa
   macs:
     - hmac-sha2-512-etm@openssh.com
     - hmac-sha2-256-etm@openssh.com
@@ -199,8 +198,6 @@ ssh-keygen -t ed25519
 
 if you do not have one.
 
-Be sure to adjust the host pattern `ssh-servers`to a host group defined in your inventory file.
-
 Then you can use a playbook like this to deploy:
 
 ```yaml
@@ -208,7 +205,7 @@ Then you can use a playbook like this to deploy:
 # play: test-site
 # file: site.yml
 
-- hosts: ssh_servers
+- hosts: all
   roles:
     - role: ansible-role-ssh
 ```

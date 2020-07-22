@@ -9,7 +9,7 @@
 # not the current key size, so you cannot replace when different size as desired...
 
 - name: Check for {{ hostkey.type }} capability
-  shell: "set -o pipefail && strings /usr/sbin/sshd | grep {{ hostkey.type }} | wc -l"
+  shell: "set -o pipefail && ssh -Q key | grep {{ hostkey.type }} | wc -l"
   args:
     executable: /bin/bash
   changed_when: False
