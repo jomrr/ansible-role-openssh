@@ -16,13 +16,23 @@
   changed_when: false
   register: ssh_hostkey_capability
   check_mode: false
+  when: ssh_version is version(ssh_q_version, '<')
 
-- name: Check if host {{ hostkey.path }} exists
+- name: "Check for {{ hostkey.type }} capability"
+  shell: "set -o pipefail && ssh -Q key | grep {{ hostkey.type }} | wc -l"
+  args:
+    executable: /bin/bash
+  changed_when: False
+  register: ssh_hostkey_capability
+  check_mode: no
+  when: ssh_version is version(ssh_q_version, '>=')
+
+- name: "Check if host {{ hostkey.path }} exists"
   stat:
     path: "{{ hostkey.path }}"
   register: hostkey_file
 
-- name: Create {{ hostkey.path }} if it does not exist
+- name: "Create {{ hostkey.path }} if it does not exist"
   shell: |
     set -o pipefail && echo -e 'y' | \
     ssh-keygen -q \
@@ -37,9 +47,8 @@
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
     and (not hostkey_file.stat.exists) | bool
 
-- name: Check {{ hostkey.path }} size
-  shell: |
-    set -o pipefail && ssh-keygen -l -f {{ hostkey.path }} | awk '{ print $1 }'
+- name: "Check {{ hostkey.path }} size"
+  shell: "set -o pipefail && ssh-keygen -l -f {{ hostkey.path }} | awk '{ print $1 }'"
   args:
     executable: /bin/bash
   changed_when: false
@@ -47,7 +56,7 @@
   check_mode: false
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
 
-- name: Recreate {{ hostkey.path }} if it has a wrong size or forced
+- name: "Recreate {{ hostkey.path }} if it has a wrong size or forced"
   shell: |
     set -o pipefail && echo -e 'y' | \
     ssh-keygen -q \
@@ -64,7 +73,7 @@
     default(0, true) != (hostkey.size | default(4096, true))
     or sshd_host_keys_regenerate | bool)
 
-- name: Set permissions for private hostkeys
+- name: "Set permissions for private hostkeys"
   file:
     path: "{{ hostkey.path }}"
     owner: root
@@ -72,7 +81,7 @@
     mode: '0600'
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
 
-- name: Set permissions for public hostkeys
+- name: "Set permissions for public hostkeys"
   file:
     path: "{{ hostkey.path }}.pub"
     owner: root
