@@ -1,0 +1,79 @@
+---
+# role: ansible-role-ssh
+# file: tasks/version.yml
+
+- name: Determine ssh version
+  shell: set -o pipefail && ssh -V 2>&1 | sed -r "s/.*_([0-9.]*).*\s{1}.*/\1/"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_version_out
+  check_mode: false
+
+- name: Set fact ssh_version
+  set_fact:
+    ssh_version: "{{ ssh_version_out.stdout }}"
+
+- name: Determine available ciphers
+  shell: "set -o pipefail && ssh -Q cipher"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_ciphers
+  check_mode: false
+
+- name: Set fact ssh_available_ciphers
+  set_fact:
+    ssh_available_ciphers: "{{ ssh_gather_ciphers.stdout_lines }}"
+
+- name: Determine available kexs
+  shell: "set -o pipefail && ssh -Q kex"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_kexs
+  check_mode: false
+
+- name: Set fact ssh_available_kexs
+  set_fact:
+    ssh_available_kexs: "{{ ssh_gather_kexs.stdout_lines }}"
+
+- name: Determine available key types
+  shell: "set -o pipefail && ssh -Q key"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_keys
+  check_mode: false
+
+- name: Set fact ssh_available_keys
+  set_fact:
+    ssh_available_keys: "{{ ssh_gather_keys.stdout_lines }}"
+
+- name: Determine available macs
+  shell: "set -o pipefail && ssh -Q mac"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_macs
+  check_mode: false
+
+- name: Set fact ssh_available_macs
+  set_fact:
+    ssh_available_macs: "{{ ssh_gather_macs.stdout_lines }}"
+
+- name: Set fact ssh_ciphers
+  set_fact:
+    ssh_ciphers: "{{ ssh_algorithms.ciphers | intersect(ssh_available_ciphers) | join(',') }}"
+
+- name: Set fact ssh_kexs
+  set_fact:
+    ssh_kexs: "{{ ssh_algorithms.kexs | intersect(ssh_available_kexs) | join(',') }}"
+
+- name: Set fact ssh_keys
+  set_fact:
+    ssh_keys: "{{ ssh_algorithms.hostkeys | intersect(ssh_available_keys) | join(',') }}"
+
+- name: Set fact ssh_macs
+  set_fact:
+    ssh_macs: "{{ ssh_algorithms.macs | intersect(ssh_available_macs) | join(',') }}"

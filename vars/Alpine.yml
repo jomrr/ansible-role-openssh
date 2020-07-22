@@ -1,6 +1,6 @@
 ---
 # role: ansible-role-ssh
-# file: vars/Archlinux.yml
+# file: vars/Alpine.yml
 
 ssh_packages:
   - openssh

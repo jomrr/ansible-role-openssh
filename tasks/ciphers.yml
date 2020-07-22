@@ -2,107 +2,53 @@
 # role: ansible-role-ssh
 # file: tasks/version.yml
 
-- name: "Check ciphers for ssh version < 6.3 with binutils"
-  block:
-    - name: "Determine available ciphers (binutils)"
-      shell: set -o pipefail && strings /usr/sbin/sshd | grep aes128 | head -n1
-      args:
-        executable: /bin/bash
-      changed_when: False
-      register: ssh_gather_ciphers
-      check_mode: no
+- name: "Determine available ciphers (ssh -Q)"
+  shell: set -o pipefail && ssh -Q cipher
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_ciphers
+  check_mode: no
 
-    - name: "Set fact ssh_available_ciphers (binutils)"
-      set_fact:
-        ssh_available_ciphers: "{{ ssh_gather_ciphers.stdout.split(',') }}"
+- name: "Set fact ssh_available_ciphers (ssh -Q)"
+  set_fact:
+    ssh_available_ciphers: "{{ ssh_gather_ciphers.stdout }}"
 
-    - name: "Determine available kexs (binutils)"
-      shell: set -o pipefail && strings /usr/sbin/sshd | grep diffie-hellman | head -n1
-      args:
-        executable: /bin/bash
-      changed_when: false
-      register: ssh_gather_kexs
-      check_mode: no
+- name: "Determine available kexs (ssh -Q)"
+  shell: set -o pipefail && ssh -Q kex
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_kexs
+  check_mode: no
 
-    - name: "Set fact ssh_available_kexs (binutils)"
-      set_fact:
-        ssh_available_kexs: "{{ ssh_gather_kexs.stdout.split(',') }}"
+- name: "Set fact ssh_available_kexs (ssh -Q)"
+  set_fact:
+    ssh_available_kexs: "{{ ssh_gather_kexs.stdout }}"
 
-    - name: "Determine available key types (binutils)"
-      shell: set -o pipefail && strings /usr/sbin/sshd | grep ssh-rsa | head -n1
-      args:
-        executable: /bin/bash
-      changed_when: false
-      register: ssh_gather_keys
-      check_mode: no
+- name: "Determine available key types (ssh -Q)"
+  shell: set -o pipefail && ssh -Q key
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_keys
+  check_mode: no
 
-    - name: "Set fact ssh_available_keys (binutils)"
-      set_fact:
-        ssh_available_keys: "{{ ssh_gather_keys.stdout.split(',') }}"
+- name: "Set fact ssh_available_keys (ssh -Q)"
+  set_fact:
+    ssh_available_keys: "{{ ssh_gather_keys.stdout }}"
 
-    - name: "Determine available macs (binutils)"
-      shell: set -o pipefail && strings /usr/sbin/sshd | grep hmac | head -n1
-      args:
-        executable: /bin/bash
-      changed_when: false
-      register: ssh_gather_macs
-      check_mode: no
+- name: "Determine available macs (ssh -Q)"
+  shell: set -o pipefail && ssh -Q mac
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: ssh_gather_macs
+  check_mode: no
 
-    - name: "Set fact ssh_available_macs (binutils)"
-      set_fact:
-        ssh_available_macs: "{{ ssh_gather_macs.stdout.split(',') }}"
-  when: ssh_version is version(ssh_q_version, '<')
-
-- name: "Check ciphers for ssh version >= 6.3 with ssh -Q <type>"
-  block:
-    - name: "Determine available ciphers (ssh -Q)"
-      shell: set -o pipefail && ssh -Q cipher
-      args:
-        executable: /bin/bash
-      changed_when: False
-      register: ssh_gather_ciphers
-      check_mode: no
-
-    - name: "Set fact ssh_available_ciphers (ssh -Q)"
-      set_fact:
-        ssh_available_ciphers: "{{ ssh_gather_ciphers.stdout }}"
-
-    - name: "Determine available kexs (ssh -Q)"
-      shell: set -o pipefail && ssh -Q kex
-      args:
-        executable: /bin/bash
-      changed_when: false
-      register: ssh_gather_kexs
-      check_mode: no
-
-    - name: "Set fact ssh_available_kexs (ssh -Q)"
-      set_fact:
-        ssh_available_kexs: "{{ ssh_gather_kexs.stdout }}"
-
-    - name: "Determine available key types (ssh -Q)"
-      shell: set -o pipefail && ssh -Q key
-      args:
-        executable: /bin/bash
-      changed_when: false
-      register: ssh_gather_keys
-      check_mode: no
-
-    - name: "Set fact ssh_available_keys (ssh -Q)"
-      set_fact:
-        ssh_available_keys: "{{ ssh_gather_keys.stdout }}"
-
-    - name: "Determine available macs (ssh -Q)"
-      shell: set -o pipefail && ssh -Q mac
-      args:
-        executable: /bin/bash
-      changed_when: false
-      register: ssh_gather_macs
-      check_mode: no
-
-    - name: "Set fact ssh_available_macs (ssh -Q)"
-      set_fact:
-        ssh_available_macs: "{{ ssh_gather_macs.stdout }}"
-  when: ssh_version is version(ssh_q_version, '>=')
+- name: "Set fact ssh_available_macs (ssh -Q)"
+  set_fact:
+    ssh_available_macs: "{{ ssh_gather_macs.stdout }}"
 
 - name: "Set fact ssh_ciphers"
   set_fact:

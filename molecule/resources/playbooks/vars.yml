@@ -1,0 +1,21 @@
+---
+# role: ansible-role-ssh
+# file: molecule/resources/playbooks/vars.yml
+
+common_role_enabled: true
+ssh_role_enabled: true
+ssh_deploy_key: ''
+sshd_listen_addr_v4: ['0.0.0.0']
+sshd_permit_root_login: 'yes'
+ssh_test_create_key: true
+ssh_strict_host_key_checking: 'no'
+ssh_enable_ssh_keysign: 'yes'
+sshd_hostbased_auth: 'yes'
+sshd_shosts_equiv:
+  test.example.com: 'testuser'
+sshd_ssh_known_hosts:
+  test.example.com: 'test.example.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAgEAG5wh1vr0N/cpknIB4+YBg6ZOTELLRPsdZxSc='
+ssh_host_config:
+  '*.example.com':
+    HostbasedAuthentication: 'yes'
+    GSSAPIAuthentication: 'yes'

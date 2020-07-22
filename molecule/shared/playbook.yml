@@ -1,9 +1,0 @@
----
-# role: ansible-role-ssh
-# file: molecule/default/playbook.yml
-
-- name: Converge
-  hosts: all
-  become: True
-  roles:
-    - role: ansible-role-ssh

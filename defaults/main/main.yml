@@ -9,7 +9,7 @@ ssh_enabled: False
 # algorithms considered to be usable and secure.
 # this list is used to filter the available algorithms on the
 # target machine via intersect.
-# you can extend it or i.e. remove elliptic curce algorithms
+# you can extend it or i.e. remove elliptic curve algorithms
 # by defining the dict ssh_algorithms as host or group var.
 ssh_algorithms:
   ciphers:
@@ -28,14 +28,14 @@ ssh_algorithms:
     - diffie-hellman-group14-sha256
     - diffie-hellman-group-exchange-sha256
   hostkeys:
+    - sk-ssh-ed25519@openssh.com
+    - sk-ssh-ed25519-cert-v01@openssh.com
     - ssh-ed25519-cert-v01@openssh.com
     - rsa-sha2-512-cert-v01@openssh.com
     - rsa-sha2-256-cert-v01@openssh.com
-    - ssh-rsa-cert-v01@openssh.com
     - ssh-ed25519
     - rsa-sha2-512
     - rsa-sha2-256
-    - ssh-rsa
   macs:
     - hmac-sha2-512-etm@openssh.com
     - hmac-sha2-256-etm@openssh.com

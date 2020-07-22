@@ -1,6 +1,6 @@
 ---
 # role: ansible-role-ssh
-# file: molecule/kvm/molecule.yml
+# file: molecule/vbox/molecule.yml
 
 dependency:
   name: galaxy
@@ -9,27 +9,42 @@ dependency:
 driver:
   name: vagrant
   provider:
-    name: libvirt
-    type: libvirt
-    options:
-      memory: 2048
-      cpus: 2
+    name: virtualbox
+    type: virtualbox
 lint: |
   set -e
   yamllint .
   ansible-lint
   flake8
 platforms:
+  - name: ssh-alpine310
+    box: "generic/alpine310"
+    cpus: 2
+    memory: 1024
   - name: ssh-arch
     box: "archlinux/archlinux"
+    cpus: 2
+    memory: 1024
   - name: ssh-centos8
     box: "centos/8"
+    cpus: 2
+    memory: 1024
   - name: ssh-debian10
     box: "debian/buster64"
+    cpus: 2
+    memory: 1024
   - name: ssh-fedora32
     box: "fedora/32-cloud-base"
+    cpus: 2
+    memory: 1024
+  - name: ssh-ubuntu1804
+    box: "ubuntu/bionic64"
+    cpus: 2
+    memory: 1024
   - name: ssh-ubuntu2004
-    box: "generic/ubuntu2004"
+    box: "ubuntu/focal64"
+    cpus: 2
+    memory: 1024
 provisioner:
   name: ansible
   log: true

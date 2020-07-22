@@ -3,7 +3,7 @@
 # file: defaults/main/ssh.yml
 
 # write default ssh client configuration to /etc/ssh/ssh_conf
-ssh_enabled: True
+ssh_enabled: true
 
 # deploy local ssh public key to remote users authorized_keys file
 # when not empty, this is used to identify local key to deploy
