@@ -17,7 +17,7 @@ platforms:
   - name: ssh-default
     image: ${MOLECULE_DIST:-"jam82/molecule-fedora:32"}
     command: ${MOLECULE_DOCKER_CMD:-""}
-    pre_build_image: True
+    pre_build_image: true
     tty: False
     tmpfs:
       - /tmp
@@ -26,19 +26,19 @@ platforms:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
 provisioner:
   name: ansible
-  log: True
+  log: true
   playbooks:
     prepare: ../resources/playbooks/prepare.yml
     converge: ../resources/playbooks/converge.yml
   inventory:
     group_vars:
       all:
-        ssh_role_enabled: True
+        ssh_role_enabled: true
 verifier:
   name: testinfra
   env:
     PYTHONWARNINGS: "ignore"
   directory: ../resources/tests
   options:
-    v: True
-    sudo: True
+    v: true
+    sudo: true

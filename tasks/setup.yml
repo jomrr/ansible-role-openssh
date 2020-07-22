@@ -25,7 +25,7 @@
   shell: awk '$5 < {{ sshd_moduli_minimum }}' {{ sshd_moduli_file }}
   register: sshd_register_moduli
   changed_when: false
-  check_mode: no
+  check_mode: false
 
 - name: Remove primes smaller than {{ sshd_moduli_minimum }}
   shell: |

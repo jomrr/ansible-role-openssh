@@ -17,24 +17,24 @@ platforms:
   - name: ssh-alpine311
     image: "jam82/molecule-alpine:3.11"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
   - name: ssh-alpine
     image: "jam82/molecule-alpine:latest"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
   - name: ssh-amazonlinux
     image: "jam82/molecule-amazonlinux:latest"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -43,8 +43,8 @@ platforms:
   - name: ssh-arch
     image: "jam82/molecule-archlinux:latest"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -53,8 +53,8 @@ platforms:
   - name: ssh-centos7
     image: "jam82/molecule-centos:7"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -63,8 +63,8 @@ platforms:
   - name: ssh-centos8
     image: "jam82/molecule-centos:8"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -73,8 +73,8 @@ platforms:
   - name: ssh-debian9
     image: "jam82/molecule-debian:9"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -83,8 +83,8 @@ platforms:
   - name: ssh-debian10
     image: "jam82/molecule-debian:10"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -93,8 +93,8 @@ platforms:
   - name: ssh-fedora
     image: "jam82/molecule-fedora:32"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -103,8 +103,8 @@ platforms:
   - name: ssh-opensuse15
     image: "jam82/molecule-opensuse:15"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -113,8 +113,8 @@ platforms:
   - name: ssh-opensuse-tumbleweed
     image: "jam82/molecule-opensuse:tumbleweed"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -123,8 +123,8 @@ platforms:
   - name: ssh-oraclelinux7
     image: "jam82/molecule-oraclelinux:7"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -133,8 +133,8 @@ platforms:
   - name: ssh-oraclelinux8
     image: "jam82/molecule-oraclelinux:8"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -143,8 +143,8 @@ platforms:
   - name: ssh-oraclelinux
     image: "jam82/molecule-oraclelinux:latest"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -153,8 +153,8 @@ platforms:
   - name: ssh-ubuntu1604
     image: "jam82/molecule-ubuntu:16.04"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -163,8 +163,8 @@ platforms:
   - name: ssh-ubuntu1804
     image: "jam82/molecule-ubuntu:18.04"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -173,8 +173,8 @@ platforms:
   - name: ssh-ubuntu2004
     image: "jam82/molecule-ubuntu:20.04"
     override_command: False
-    pre_build_image: True
-    privileged: True
+    pre_build_image: true
+    privileged: true
     tmpfs:
       - /tmp
       - /run
@@ -182,19 +182,19 @@ platforms:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
 provisioner:
   name: ansible
-  log: True
+  log: true
   playbooks:
     prepare: ../resources/playbooks/prepare.yml
     converge: ../resources/playbooks/converge.yml
   inventory:
     group_vars:
       all:
-        ssh_role_enabled: True
+        ssh_role_enabled: true
 verifier:
   name: testinfra
   env:
     PYTHONWARNINGS: "ignore"
   directory: ../resources/tests
   options:
-    v: True
-    sudo: True
+    v: true
+    sudo: true

@@ -5,16 +5,17 @@
 # This is a bit ugly for several reasons:
 # 1. Debian-Family distros start sshd after installation and
 # generate rsa host keys with 2048 bits.
-# 2. openssh_keypair module is not idempotent, the return value 'size' is the desired,
-# not the current key size, so you cannot replace when different size as desired...
+# 2. openssh_keypair module is not idempotent, the return value 'size' is
+# the desired, not the current key size, so you cannot replace when
+# different size as desired...
 
 - name: Check for {{ hostkey.type }} capability
   shell: "set -o pipefail && ssh -Q key | grep {{ hostkey.type }} | wc -l"
   args:
     executable: /bin/bash
-  changed_when: False
+  changed_when: false
   register: ssh_hostkey_capability
-  check_mode: no
+  check_mode: false
 
 - name: Check if host {{ hostkey.path }} exists
   stat:
@@ -32,17 +33,18 @@
     -N ''
   args:
     executable: /bin/bash
-  check_mode: no
+  check_mode: false
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
     and (not hostkey_file.stat.exists) | bool
 
 - name: Check {{ hostkey.path }} size
-  shell: "set -o pipefail && ssh-keygen -l -f {{ hostkey.path }} | awk '{ print $1 }'"
+  shell: |
+    set -o pipefail && ssh-keygen -l -f {{ hostkey.path }} | awk '{ print $1 }'
   args:
     executable: /bin/bash
-  changed_when: False
+  changed_when: false
   register: ssh_hostkey_size
-  check_mode: no
+  check_mode: false
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
 
 - name: Recreate {{ hostkey.path }} if it has a wrong size or forced
@@ -56,9 +58,10 @@
     -N ''
   args:
     executable: /bin/bash
-  check_mode: no
+  check_mode: false
   when: ssh_hostkey_capability.stdout | default(0, true) | int > 0
-    and (ssh_hostkey_size.stdout | int | default(0, true) != (hostkey.size | default(4096, true))
+    and (ssh_hostkey_size.stdout | int |
+    default(0, true) != (hostkey.size | default(4096, true))
     or sshd_host_keys_regenerate | bool)
 
 - name: Set permissions for private hostkeys

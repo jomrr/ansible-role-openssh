@@ -6,57 +6,57 @@
   shell: set -o pipefail && ssh -V 2>&1 | sed -r "s/.*_([0-9.]*).*\s{1}.*/\1/"
   args:
     executable: /bin/bash
-  changed_when: False
+  changed_when: false
   register: ssh_version_out
-  check_mode: no
+  check_mode: false
 
 - name: Set fact ssh_version
   set_fact:
     ssh_version: "{{ ssh_version_out.stdout }}"
 
 - name: Determine available ciphers
-  shell: ssh -Q cipher
+  shell: "set -o pipefail && ssh -Q cipher"
   args:
     executable: /bin/bash
-  changed_when: False
+  changed_when: false
   register: ssh_gather_ciphers
-  check_mode: no
+  check_mode: false
 
 - name: Set fact ssh_available_ciphers
   set_fact:
     ssh_available_ciphers: "{{ ssh_gather_ciphers.stdout_lines }}"
 
 - name: Determine available kexs
-  shell: ssh -Q kex
+  shell: "set -o pipefail && ssh -Q kex"
   args:
     executable: /bin/bash
   changed_when: false
   register: ssh_gather_kexs
-  check_mode: no
+  check_mode: false
 
 - name: Set fact ssh_available_kexs
   set_fact:
     ssh_available_kexs: "{{ ssh_gather_kexs.stdout_lines }}"
 
 - name: Determine available key types
-  shell: ssh -Q key
+  shell: "set -o pipefail && ssh -Q key"
   args:
     executable: /bin/bash
   changed_when: false
   register: ssh_gather_keys
-  check_mode: no
+  check_mode: false
 
 - name: Set fact ssh_available_keys
   set_fact:
     ssh_available_keys: "{{ ssh_gather_keys.stdout_lines }}"
 
 - name: Determine available macs
-  shell: ssh -Q mac
+  shell: "set -o pipefail && ssh -Q mac"
   args:
     executable: /bin/bash
   changed_when: false
   register: ssh_gather_macs
-  check_mode: no
+  check_mode: false
 
 - name: Set fact ssh_available_macs
   set_fact:

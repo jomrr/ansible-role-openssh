@@ -32,19 +32,19 @@ platforms:
     box: "generic/ubuntu2004"
 provisioner:
   name: ansible
-  log: True
+  log: true
   playbooks:
     prepare: ../resources/playbooks/prepare.yml
     converge: ../resources/playbooks/converge.yml
   inventory:
     group_vars:
       all:
-        ssh_role_enabled: True
+        ssh_role_enabled: true
 verifier:
   name: testinfra
   env:
     PYTHONWARNINGS: "ignore"
   directory: ../resources/tests
   options:
-    v: True
-    sudo: True
+    v: true
+    sudo: true

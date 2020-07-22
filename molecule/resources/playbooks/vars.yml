@@ -2,19 +2,19 @@
 # role: ansible-role-ssh
 # file: molecule/resources/playbooks/vars.yml
 
-common_role_enabled: True
-ssh_role_enabled: True
+common_role_enabled: true
+ssh_role_enabled: true
 ssh_deploy_key: ''
 sshd_listen_addr_v4: ['0.0.0.0']
 sshd_permit_root_login: 'yes'
-ssh_test_create_key: True
+ssh_test_create_key: true
 ssh_strict_host_key_checking: 'no'
 ssh_enable_ssh_keysign: 'yes'
 sshd_hostbased_auth: 'yes'
 sshd_shosts_equiv:
   test.example.com: 'testuser'
 sshd_ssh_known_hosts:
-  test.example.com: 'test.example.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAgEA1WuHeYhSq0sw6y9iRId7yWpTlcpbyeCOMWYq1ht86DIs2jGRxvkOYxnMQmVsevl2ckuQPAIKgm03bPS1PHYHtRDe72gI90PFtW96fZLn9dsh3HYB6+Bx//aVJ7r3LdLMJr8tcGO378x/hjy01AxbAJJGDGcPecngbffCeDHVdXPpvm88GgPyMtUPaLbFOA5Eq0UyVxQrFj/1iA0Ufy6hDzoyMrg7kK6Bwt2Oa9BoIEM7Y3UqkvANBxlVuO2ChijPgma6aYiL0zN12WBDuwkP5Add/8Q2bTGsMtTGCXAB1UzULwMiFM2JLXwZ74lapd2ZHc/K+oPCT+qq6hND8uUfTMJgSyCVAqavT2x1qaWiVJ3SU2hT7SxjnKekaj/GjBPTbyEWyWDApHQSv4B8ArbLz8AB4FKRvXdG+G5wh1vr0N/cpknIB4VtJWOj4IMfoILNfHfFv/eBUTINpSuZNd0/E7YwR4P+dDMUQB0QPbK7iVBKVCTffgd3GgANUA6rg/FloxOMmitXutCmQPZu4XaL3dq4C7potEH5XPIHvnKeRJtitxOgb1M9B4ulrVspO+sgJRq6ZzJzBECIIhcIJ59RktpPZ1pa4A8wtgoLE0qWxOdkpKTckVHJhYU18UQ1rKaOEKd4upEZSjwGTf4xEDwyKqrc+YBg6ZOTELLRPsdZxSc='
+  test.example.com: 'test.example.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAgEAG5wh1vr0N/cpknIB4+YBg6ZOTELLRPsdZxSc='
 ssh_host_config:
   '*.example.com':
     HostbasedAuthentication: 'yes'
