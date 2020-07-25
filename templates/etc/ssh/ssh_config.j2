@@ -42,11 +42,13 @@ EnableSSHKeysign {{ ssh_enable_ssh_keysign }}
 EscapeChar ~
 ForwardAgent no
 ForwardX11 no
+{% if ansible_os_family != 'Alpine' %}
 GSSAPIAuthentication {{ ssh_gssapi_authentication }}
 GSSAPIDelegateCredentials no
 {% if ansible_distribution != 'Archlinux' %}
 GSSAPIKeyExchange no
 GSSAPITrustDns no
+{% endif %}
 {% endif %}
 HashKnownHosts yes
 HostbasedAuthentication {{ ssh_hostbased_authentication }}

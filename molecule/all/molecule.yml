@@ -140,16 +140,6 @@ platforms:
       - /run
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: ssh-oraclelinux
-    image: "jam82/molecule-oraclelinux:latest"
-    override_command: False
-    pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: ssh-ubuntu1604
     image: "jam82/molecule-ubuntu:16.04"
     override_command: False

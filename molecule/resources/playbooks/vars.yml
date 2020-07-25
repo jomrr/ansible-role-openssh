@@ -2,8 +2,9 @@
 # role: ansible-role-ssh
 # file: molecule/resources/playbooks/vars.yml
 
-common_role_enabled: true
-ssh_role_enabled: true
+role_ssh_enabled: true
+ssh_enabled: true
+sshd_enabled: true
 ssh_deploy_key: ''
 sshd_listen_addr_v4: ['0.0.0.0']
 sshd_permit_root_login: 'yes'
@@ -18,4 +19,3 @@ sshd_ssh_known_hosts:
 ssh_host_config:
   '*.example.com':
     HostbasedAuthentication: 'yes'
-    GSSAPIAuthentication: 'yes'

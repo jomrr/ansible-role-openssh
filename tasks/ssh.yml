@@ -19,20 +19,25 @@
     modification_time: preserve
     access_time: preserve
 
-- name: "TESTING --- Create ssh key"
-  openssh_keypair:
-    path: '~/.ssh/identity'
-  when: ssh_test_create_key | bool
+- name: "TESTING"
+  block:
+    - name: "TESTING --- Create user"
+      user:
+        name: test
+        password: $6$mysecretsalt$qJbapG68nyRab3gxvKWPUcs2g3t0oMHSHMnSKecYNpSi3CuZm.GbBqXO8BE6EI6P1JUefhA0qvD7b5LSh./PU1
 
-- name: "TESTING --- Get public key"
-  command: cat ~/.ssh/identity.pub
-  register: pubkey
-  changed_when: false
-  when: ssh_test_create_key | bool
+    - name: "TESTING --- Create ssh key"
+      openssh_keypair:
+        path: '~/.ssh/identity'
 
-- name: "TESTING --- Setup authorized_key file"
-  authorized_key:
-    user: "{{ ansible_become_user | default('root', True) }}"
-    state: present
-    key: "{{ pubkey.stdout }}"
+    - name: "TESTING --- Get public key"
+      command: cat ~/.ssh/identity.pub
+      register: pubkey
+      changed_when: false
+
+    - name: "TESTING --- Setup authorized_key file"
+      authorized_key:
+        user: test
+        state: present
+        key: "{{ pubkey.stdout }}"
   when: ssh_test_create_key | bool
