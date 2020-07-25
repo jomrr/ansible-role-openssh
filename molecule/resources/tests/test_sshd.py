@@ -22,6 +22,9 @@ def test_sshd_active(host):
     elif os == 'debian':
         assert host.service("ssh").is_running is True
 
+    elif os == 'fedora':
+        assert host.service("sshd").is_running is True
+
     elif os == 'manjaro':
         assert host.service("sshd").is_running is True
 
