@@ -7,6 +7,14 @@
     name: "{{ sshd_service_name }}"
     state: started
 
+- name: Create central authorized_keys directory and set permissions
+  file:
+    path: /etc/ssh/authorized_keys.d
+    state: directory
+    mode: '0755'
+    modification_time: preserve
+    access_time: preserve
+
 - name: Inlcude local pubkey from current user in remote users authorized_keys
   become: True
   become_user: "{{ ansible_user }}"
