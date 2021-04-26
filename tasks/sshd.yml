@@ -2,30 +2,23 @@
 # role: ansible-role-ssh
 # file: tasks/sshd.yml
 
-- name: Start sshd
+- name: "Start sshd"
   service:
     name: "{{ sshd_service_name }}"
     state: started
 
-- name: Create central authorized_keys directory and set permissions
+- name: "Create central authorized_keys directory and set permissions"
   file:
-    path: /etc/ssh/authorized_keys.d
+    path: "{{ sshd_authorized_keys_dir.path }}"
     state: directory
-    mode: '0755'
+    mode: "{{ sshd_authorized_keys_dir.mode }}"
+    owner: "{{ sshd_authorized_keys_dir.owner }}"
+    group: "{{ sshd_authorized_keys_dir.group }}"
     modification_time: preserve
     access_time: preserve
+  when: sshd_authorized_keys_dir | length > 0
 
-- name: Inlcude local pubkey from current user in remote users authorized_keys
-  become: True
-  become_user: "{{ ansible_user }}"
-  authorized_key:
-    user: "{{ ansible_user | default(ansible_user_id, True) }}"
-    state: present
-    key: "{{ lookup('file', ssh_deploy_key) }}"
-  when: ssh_deploy_key | length > 0
-    and sshd_pubkey_auth | bool
-
-- name: Set up etc/ssh/shosts.equiv
+- name: "Set up etc/ssh/shosts.equiv"
   template:
     src: 'etc/ssh/shosts.equiv.j2'
     dest: '/etc/ssh/shosts.equiv'
@@ -34,7 +27,7 @@
     group: 'root'
   when: sshd_hostbased_auth | bool
 
-- name: Set up etc/ssh/ssh_known_hosts
+- name: "Set up etc/ssh/ssh_known_hosts"
   known_hosts:
     path: '/etc/ssh/ssh_known_hosts'
     name: "{{ item.key }}"
@@ -43,7 +36,7 @@
     hash_host: yes
   loop: "{{ sshd_ssh_known_hosts | dict2items }}"
 
-- name: Set up sshd configuration in /etc/ssh/sshd_config
+- name: "Set up sshd configuration in /etc/ssh/sshd_config"
   template:
     src: 'etc/ssh/sshd_config.j2'
     dest: '/etc/ssh/sshd_config'

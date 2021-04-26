@@ -37,18 +37,16 @@ SyslogFacility AUTH
 LogLevel INFO
 
 # Authentication Methods -----------------------------------------------------
-# AuthenticationMethods gssapi-with-mic, hostbased, keyboard-interactive, password, publickey
-
+# AuthenticationMethods gssapi-with-mic,hostbased,keyboard-interactive,password,publickey
+AuthenticationMethods {{ sshd_authentication_methods }}
 LoginGraceTime {{ sshd_login_grace_time }}
-PermitRootLogin {{ sshd_permit_root_login }}
-StrictModes yes
 MaxAuthTries {{ sshd_max_auth_tries }}
 MaxSessions {{ sshd_max_sessions }}
+PermitRootLogin {{ sshd_permit_root_login }}
+StrictModes yes
 
 # Key baesd Authentication ---------------------------------------------------
-
 PubkeyAuthentication {{ sshd_pubkey_auth }}
-
 {% if ssh_version is version('5.9', '>=', True) %}
 # Expect .ssh/authorized_keys2 to be disregarded by default in future.
 AuthorizedKeysFile {{ sshd_authorized_keys_files | join(' ') }}
