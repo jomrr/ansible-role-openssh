@@ -1,6 +1,8 @@
 ---
-# file: requirements.yml
+# role: jomrr.ssh
+# file: meta/requirements.yml
 
-# - src: https://github.com/jam82/ansible-role-common.git
-#   name: common
-#   version: master
+collections:
+  - {'name': 'community.general'}
+
+roles: []

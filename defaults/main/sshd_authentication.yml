@@ -40,6 +40,19 @@ sshd_max_sessions: 10
 # Note that this option applies to protocol version 2 only.
 sshd_pubkey_auth: 'yes'
 
+# For configuring a central dir for authorized keys, specify it here.
+# Add '/etc/ssh/authorized_keys.d/%u' to list 'sshd_authorized_keys_files'.
+sshd_authorized_keys_dir:
+  path: /etc/ssh/authorized_keys.d/
+  mode: '0755'
+  owner: root
+  group: root
+  users:
+    - name: e01local
+      keys:
+        - "https://github.com/jam82.keys"   # remote from github
+        - "{{ lookup('file', ssh_deploy_key) }}"  # local from ansible host
+
 # Specifies the file that contains the public keys that can be used for
 # user authentication. AuthorizedKeysFile may contain tokens of the form %T
 # which are substituted during connection setup. The following tokens are
@@ -55,6 +68,7 @@ sshd_pubkey_auth: 'yes'
 # as they only support AuthorizedKeysFile and AuthorizedKeysFile2.
 sshd_authorized_keys_files:
   - '.ssh/authorized_keys'
+  - '/etc/ssh/authorized_keys.d/%u'
 
 # Password Authentication ----------------------------------------------------
 

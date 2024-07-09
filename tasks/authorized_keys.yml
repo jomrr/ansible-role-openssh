@@ -1,0 +1,20 @@
+---
+# role: ansible-role-ssh
+# file: tasks/authorized_keys.yml
+
+- name: "Create central authorized_key files"
+  authorized_key:
+    user: "{{ item.name }}"
+  
+  loop: "{{ sshd_authorized_keys_dir.users | product() | list }}"
+
+- name: "Inlcude local keys from current user in remote users authorized_keys"
+  become: True
+  become_user: "{{ ansible_user }}"
+  authorized_key:
+    user: "{{ ansible_user | default(ansible_user_id, True) }}"
+    state: present
+    key: "{{ lookup('file', ssh_deploy_key) }}"
+  when: ssh_deploy_key | length > 0
+    and sshd_pubkey_auth | bool
+    and '.ssh/authorized_keys' in sshd_authorized_keys_files
