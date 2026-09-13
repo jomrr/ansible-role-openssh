@@ -6,22 +6,46 @@
   hosts: all
   gather_facts: true
   tasks:
-    - name: OPENSSH | Authenticate with a centrally authorized key
-      become: true
-      become_user: root
-      ansible.builtin.command:
-        argv:
-          - ssh
-          - -i
-          - /tmp/openssh-molecule-key
-          - -oBatchMode=yes
-          - -oStrictHostKeyChecking=no
-          - -oUserKnownHostsFile=/dev/null
-          - openssh-test@localhost
-          - id -un
-      changed_when: false
-      register: __openssh_login
-      failed_when: __openssh_login.rc != 0 or __openssh_login.stdout != 'openssh-test'
+    - name: OPENSSH | Verify key authentication with failure diagnostics
+      block:
+        - name: OPENSSH | Authenticate with a centrally authorized key
+          become: true
+          become_user: root
+          ansible.builtin.command:
+            argv:
+              - ssh
+              - -vv
+              - -i
+              - /tmp/openssh-molecule-key
+              - -oBatchMode=yes
+              - -oStrictHostKeyChecking=no
+              - -oUserKnownHostsFile=/dev/null
+              - openssh-test@localhost
+              - id -un
+          changed_when: false
+          register: __openssh_login
+          failed_when: __openssh_login.rc != 0 or __openssh_login.stdout != 'openssh-test'
+      always:
+        - name: OPENSSH | Diagnose a failed SSH login
+          when: __openssh_login is failed
+          block:
+            - name: OPENSSH | Read the SSH server journal
+              become: true
+              become_user: root
+              ansible.builtin.command:
+                argv:
+                  - journalctl
+                  - --no-pager
+                  - --output=short-precise
+                  - --lines=80
+                  - --unit=sshd.service
+                  - --unit=ssh.service
+              changed_when: false
+              register: __openssh_journal
+
+            - name: OPENSSH | Show the SSH server journal
+              ansible.builtin.debug:
+                var: __openssh_journal.stdout_lines
 
     - name: OPENSSH | Verify vendor SFTP integration
       become: true
