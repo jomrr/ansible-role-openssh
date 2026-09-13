@@ -63,28 +63,40 @@ platforms:
     pre_build_image: true
     override_command: false
     systemd: "true"
+    capabilities:
+      - "DAC_READ_SEARCH"
   - name: "debian-latest-openssh"
     image: "docker.io/jomrr/molecule-debian:latest"
     pre_build_image: true
     override_command: false
     systemd: "true"
+    capabilities:
+      - "DAC_READ_SEARCH"
   - name: "fedora-latest-openssh"
     image: "docker.io/jomrr/molecule-fedora:latest"
     pre_build_image: true
     override_command: false
     systemd: "true"
+    capabilities:
+      - "DAC_READ_SEARCH"
   - name: "opensuse-leap-latest-openssh"
     image: "docker.io/jomrr/molecule-opensuse-leap:latest"
     pre_build_image: true
     override_command: false
     systemd: "true"
+    capabilities:
+      - "DAC_READ_SEARCH"
   - name: "opensuse-tumbleweed-latest-openssh"
     image: "docker.io/jomrr/molecule-opensuse-tumbleweed:latest"
     pre_build_image: true
     override_command: false
     systemd: "true"
+    capabilities:
+      - "DAC_READ_SEARCH"
   - name: "ubuntu-latest-openssh"
     image: "docker.io/jomrr/molecule-ubuntu:latest"
     pre_build_image: true
     override_command: false
     systemd: "true"
+    capabilities:
+      - "DAC_READ_SEARCH"
