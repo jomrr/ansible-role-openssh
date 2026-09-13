@@ -1,0 +1,5 @@
+# Managed by ansible.
+# file: {{ template_destpath }}
+{% for __openssh_host, __openssh_user in openssh_shosts_equiv.items() %}
+{{ __openssh_host }} {{ __openssh_user }}
+{% endfor %}

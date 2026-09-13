@@ -1,0 +1,94 @@
+---
+# role: openssh
+# file: molecule/resources/playbooks/verify.yml
+
+- name: OPENSSH | Verify functional SSH behavior
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: OPENSSH | Authenticate with a centrally authorized key
+      become: true
+      become_user: root
+      ansible.builtin.command:
+        argv:
+          - ssh
+          - -i
+          - /tmp/openssh-molecule-key
+          - -oBatchMode=yes
+          - -oStrictHostKeyChecking=no
+          - -oUserKnownHostsFile=/dev/null
+          - openssh-test@localhost
+          - id -un
+      changed_when: false
+      register: __openssh_login
+      failed_when: __openssh_login.rc != 0 or __openssh_login.stdout != 'openssh-test'
+
+    - name: OPENSSH | Verify vendor SFTP integration
+      become: true
+      become_user: root
+      ansible.builtin.command:
+        argv:
+          - sftp
+          - -i
+          - /tmp/openssh-molecule-key
+          - -oBatchMode=yes
+          - -oStrictHostKeyChecking=no
+          - -oUserKnownHostsFile=/dev/null
+          - -b
+          - /dev/null
+          - openssh-test@localhost
+      changed_when: false
+
+    - name: OPENSSH | Reject root authentication with the test identity
+      become: true
+      become_user: root
+      ansible.builtin.command:
+        argv:
+          - ssh
+          - -i
+          - /tmp/openssh-molecule-key
+          - -oBatchMode=yes
+          - -oStrictHostKeyChecking=no
+          - -oUserKnownHostsFile=/dev/null
+          - root@localhost
+          - 'true'
+      changed_when: false
+      register: __openssh_root_login
+      failed_when: __openssh_root_login.rc != 255
+
+    - name: OPENSSH | Locate a system SSH crypto policy backend
+      become: true
+      become_user: root
+      ansible.builtin.stat:
+        path: /etc/crypto-policies/back-ends/opensshserver.config
+      register: __openssh_policy_file
+
+    - name: OPENSSH | Read system policy algorithms through the native parser
+      become: true
+      become_user: root
+      ansible.builtin.command:
+        argv: [sshd, -T, -f, /etc/crypto-policies/back-ends/opensshserver.config]
+      changed_when: false
+      register: __openssh_policy
+      when: __openssh_policy_file.stat.exists
+
+    - name: OPENSSH | Read effective server policy
+      become: true
+      become_user: root
+      ansible.builtin.command:
+        argv: [sshd, -T]
+      changed_when: false
+      register: __openssh_effective
+      when: __openssh_policy_file.stat.exists
+
+    - name: OPENSSH | Verify preservation of system policy algorithms
+      ansible.builtin.assert:
+        that:
+          - >-
+            __openssh_policy.stdout_lines | map('lower') | select('match', '^(ciphers|macs|kexalgorithms) ')
+            | list | length == 3
+          - >-
+            __openssh_policy.stdout_lines | map('lower') | select('match', '^(ciphers|macs|kexalgorithms) ')
+            | difference(__openssh_effective.stdout_lines | map('lower')) | length == 0
+        quiet: true
+      when: __openssh_policy_file.stat.exists

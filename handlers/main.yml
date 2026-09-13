@@ -1,8 +1,31 @@
 ---
-# role: ansible-role-ssh
-# file: handlers/main/main.yml
+# role: openssh
+# file: handlers/main.yml
 
-- name: restart sshd
-  service:
-    name: "{{ sshd_service_name }}"
+- name: OPENSSH | Validate the complete server configuration
+  become: true
+  become_user: root
+  ansible.builtin.command:
+    argv: "{{ __openssh_server_check }}"
+  changed_when: false
+  listen: restart sshd
+
+- name: OPENSSH | Apply native socket configuration
+  become: true
+  become_user: root
+  ansible.builtin.systemd_service:
+    name: "{{ __openssh_socket_unit }}"
+    daemon_reload: true
     state: restarted
+  loop: "{{ __openssh_socket_units }}"
+  loop_control:
+    loop_var: __openssh_socket_unit
+  listen: restart sshd
+
+- name: OPENSSH | Restart the configured server
+  become: true
+  become_user: root
+  ansible.builtin.service:
+    name: "{{ __openssh_service }}"
+    state: restarted
+  listen: restart sshd

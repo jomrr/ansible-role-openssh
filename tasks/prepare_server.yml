@@ -1,0 +1,51 @@
+---
+# role: openssh
+# file: tasks/prepare_server.yml
+
+- name: OPENSSH | Install server packages
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    name: "{{ __openssh_server_packages }}"
+    state: present
+
+- name: OPENSSH | Create the runtime directory required by native validation
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ __openssh_runtime_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "{{ __openssh_runtime_mode }}"
+
+- name: OPENSSH | Manage host keys
+  become: true
+  become_user: root
+  community.crypto.openssh_keypair:
+    path: "{{ __openssh_host_key.path }}"
+    type: "{{ __openssh_host_key.type }}"
+    size: "{{ __openssh_host_key.size | default(omit) }}"
+    regenerate: "{{ openssh_host_key_regenerate }}"
+    owner: root
+    group: root
+    mode: '0600'
+  loop: "{{ openssh_host_keys }}"
+  loop_control:
+    loop_var: __openssh_host_key
+    label: "{{ __openssh_host_key.path }}"
+  when: __openssh_host_key.type != 'ed25519' or not ansible_facts.fips
+  notify: restart sshd
+
+- name: OPENSSH | Filter weak Diffie-Hellman moduli
+  become: true
+  become_user: root
+  openssh_moduli:
+    src: "{{ __openssh_moduli_file }}"
+    path: /etc/ssh/moduli.ansible
+    minimum: "{{ openssh_moduli_minimum }}"
+    backup: "{{ openssh_backup }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart sshd

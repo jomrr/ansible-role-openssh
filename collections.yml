@@ -1,0 +1,11 @@
+---
+# role: openssh
+# file: collections.yml
+
+collections:
+  - name: community.general
+    version: '>=12.0.0'
+  - name: community.crypto
+    version: '>=3.0.0'
+  - name: ansible.posix
+    version: '>=2.0.0'

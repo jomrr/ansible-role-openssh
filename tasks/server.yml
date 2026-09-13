@@ -1,0 +1,140 @@
+---
+# role: openssh
+# file: tasks/server.yml
+
+- name: OPENSSH | Create the server drop-in directory
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ __openssh_server_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: OPENSSH | Bootstrap the local server configuration from the vendor file
+  become: true
+  become_user: root
+  ansible.builtin.copy:
+    src: "{{ __openssh_vendor_server }}"
+    dest: "{{ __openssh_server_config }}"
+    remote_src: true
+    force: false
+    owner: root
+    group: root
+    mode: '0600'
+  when: __openssh_vendor_server | length > 0
+
+- name: OPENSSH | Enable server drop-in configuration
+  become: true
+  become_user: root
+  ansible.builtin.lineinfile:
+    path: "{{ __openssh_server_config }}"
+    line: "Include {{ __openssh_server_directory }}/*.conf"
+    insertbefore: BOF
+    owner: root
+    group: root
+    mode: '0600'
+    backup: "{{ openssh_backup }}"
+    validate: "{{ __openssh_server_validate }}"
+  notify: restart sshd
+
+- name: OPENSSH | Create the central authorized key directory
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ openssh_authorized_keys_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: OPENSSH | Manage authorized public keys
+  become: true
+  become_user: root
+  ansible.posix.authorized_key:
+    user: "{{ __openssh_account.user }}"
+    key: "{{ __openssh_account.key }}"
+    path: "{{ openssh_authorized_keys_directory }}/{{ __openssh_account.user }}"
+    manage_dir: false
+    exclusive: "{{ __openssh_account.exclusive | default(openssh_authorized_keys_exclusive) }}"
+    state: "{{ __openssh_account.state | default('present') }}"
+  loop: "{{ openssh_authorized_keys }}"
+  loop_control:
+    loop_var: __openssh_account
+    label: "{{ __openssh_account.user }}"
+
+- name: OPENSSH | Manage trusted host keys
+  become: true
+  become_user: root
+  ansible.builtin.known_hosts:
+    path: "{{ __openssh_known_hosts_file }}"
+    name: "{{ __openssh_known_host.key }}"
+    key: "{{ __openssh_known_host.value }}"
+    hash_host: true
+  loop: "{{ openssh_known_hosts | dict2items }}"
+  loop_control:
+    loop_var: __openssh_known_host
+    label: "{{ __openssh_known_host.key }}"
+
+- name: OPENSSH | Configure host-based trust
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: shosts.equiv.j2
+    dest: "{{ __openssh_shosts_file }}"
+    owner: root
+    group: root
+    mode: '0600'
+    backup: "{{ openssh_backup }}"
+
+- name: OPENSSH | Configure server authentication and Match rules
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: server.conf.j2
+    dest: "{{ __openssh_server_dropin }}"
+    owner: root
+    group: root
+    mode: '0600'
+    backup: "{{ openssh_backup }}"
+    validate: "{{ __openssh_server_validate }}"
+  notify: restart sshd
+
+- name: OPENSSH | Remove the obsolete server algorithm drop-in
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ __openssh_server_crypto_dropin }}"
+    state: absent
+  notify: restart sshd
+
+- name: OPENSSH | Configure server RSA and algorithm fallbacks
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: crypto.conf.j2
+    dest: "{{ __openssh_server_crypto_config }}"
+    owner: root
+    group: root
+    mode: '0600'
+    backup: "{{ openssh_backup }}"
+    validate: "{{ __openssh_server_validate }}"
+  vars:
+    __openssh_crypto_client: false
+  notify: restart sshd
+
+- name: OPENSSH | Include server fallbacks after native global configuration
+  become: true
+  become_user: root
+  ansible.builtin.lineinfile:
+    path: "{{ __openssh_server_config }}"
+    line: "Include {{ __openssh_server_crypto_config }}"
+    insertbefore: '(?i)^[ \t]*Match[ \t]'
+    firstmatch: true
+    owner: root
+    group: root
+    mode: '0600'
+    backup: "{{ openssh_backup }}"
+    validate: "{{ __openssh_server_validate }}"
+  notify: restart sshd

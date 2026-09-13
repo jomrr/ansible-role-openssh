@@ -1,0 +1,232 @@
+---
+# role: openssh
+# file: meta/argument_specs.yml
+
+argument_specs:
+  main:
+    short_description: Configure OpenSSH clients, server authentication and host keys.
+    options:
+      openssh_backup:
+        type: bool
+        default: true
+        description:
+          - Create module-provided backups before changing configuration and moduli files.
+      openssh_crypto_profile:
+        type: str
+        default: system
+        description:
+          - Algorithm fallback profile; system leaves native algorithm policy unchanged.
+        choices:
+          - system
+          - modern
+          - cis
+          - stig
+          - bsi
+      openssh_crypto_options:
+        type: dict
+        default: {}
+        description:
+          - Algorithm fallback overrides for an explicitly selected non-system profile.
+      openssh_rsa_minimum:
+        type: int
+        default: 3072
+        description:
+          - RSA minimum used only when native configuration does not already specify one.
+          - Stronger or weaker system-policy values retain precedence; the fallback must
+            be at least 3072 bits.
+      openssh_client_defaults:
+        type: dict
+        default:
+          AddressFamily: any
+          ForwardAgent: 'no'
+          ForwardX11: 'no'
+          HashKnownHosts: 'yes'
+          HostbasedAuthentication: 'no'
+          KbdInteractiveAuthentication: 'no'
+          PasswordAuthentication: 'no'
+          PubkeyAuthentication: 'yes'
+          RekeyLimit: 1G 1h
+          StrictHostKeyChecking: 'yes'
+          Tunnel: 'no'
+        description:
+          - Base client directives, merged with openssh_client_options.
+      openssh_client_options:
+        type: dict
+        default: {}
+        description:
+          - Additional client directives and overrides using native SSH syntax.
+      openssh_client_hosts:
+        type: dict
+        default: {}
+        description:
+          - Host patterns mapped to client directive dictionaries, before global defaults.
+      openssh_server_defaults:
+        type: dict
+        default:
+          AddressFamily: any
+          Port: 22
+          PermitRootLogin: 'no'
+          AuthenticationMethods: publickey
+          PubkeyAuthentication: 'yes'
+          PasswordAuthentication: 'no'
+          KbdInteractiveAuthentication: 'no'
+          PermitEmptyPasswords: 'no'
+          HostbasedAuthentication: 'no'
+          IgnoreRhosts: 'yes'
+          IgnoreUserKnownHosts: 'yes'
+          StrictModes: 'yes'
+          PermitUserEnvironment: 'no'
+          AllowAgentForwarding: 'no'
+          AllowTcpForwarding: 'no'
+          AllowStreamLocalForwarding: 'no'
+          GatewayPorts: 'no'
+          X11Forwarding: 'no'
+          X11UseLocalhost: 'yes'
+          PermitTunnel: 'no'
+          LoginGraceTime: 60
+          MaxAuthTries: 3
+          MaxSessions: 10
+          MaxStartups: 10:30:60
+          ClientAliveInterval: 300
+          ClientAliveCountMax: 1
+          LogLevel: VERBOSE
+          SyslogFacility: AUTHPRIV
+          RekeyLimit: 1G 1h
+          UseDNS: 'no'
+        description:
+          - Base server directives, merged with openssh_server_options.
+      openssh_server_options:
+        type: dict
+        default: {}
+        description:
+          - Additional server directives and overrides using native sshd syntax.
+      openssh_listen_addresses:
+        type: list
+        default: []
+        description:
+          - Explicit IPv4 or IPv6 listener addresses; an empty list uses native wildcard
+            listeners.
+        elements: str
+      openssh_match_users:
+        type: dict
+        default: {}
+        description:
+          - User patterns mapped to Match User directive dictionaries.
+          - Accepted user-key algorithms and authorized-key sources may be restricted per
+            match.
+      openssh_match_groups:
+        type: dict
+        default: {}
+        description:
+          - Group patterns mapped to Match Group directive dictionaries.
+          - Accepted user-key algorithms and authorized-key sources may be restricted per
+            match; MFA is opt-in.
+      openssh_host_keys:
+        type: list
+        default:
+          - type: ed25519
+            path: /etc/ssh/ssh_host_ed25519_key
+          - type: ecdsa
+            size: 384
+            path: /etc/ssh/ssh_host_ecdsa_key
+          - type: rsa
+            size: 4096
+            path: /etc/ssh/ssh_host_rsa_key
+        description:
+          - Managed host keys; Ed25519 keys are omitted on hosts running in FIPS mode.
+        elements: dict
+        options:
+          type:
+            type: str
+            required: true
+            choices:
+              - rsa
+              - ecdsa
+              - ed25519
+            description:
+              - Key algorithm.
+          path:
+            type: path
+            required: true
+            description:
+              - Absolute private host key path.
+          size:
+            type: int
+            description:
+              - Optional algorithm-specific key size.
+      openssh_host_key_regenerate:
+        type: str
+        default: partial_idempotence
+        description:
+          - Native keypair regeneration policy; changing key type or size can rotate host
+            identity.
+        choices:
+          - never
+          - fail
+          - partial_idempotence
+          - full_idempotence
+          - always
+      openssh_moduli_minimum:
+        type: int
+        default: 3072
+        description:
+          - Minimum actual DH modulus bit length; existing safe primes are filtered without
+            regeneration.
+      openssh_authorized_keys_directory:
+        type: path
+        default: /etc/ssh/authorized_keys.d
+        description:
+          - Central directory containing authorized key files named after their users.
+      openssh_authorized_keys:
+        type: list
+        default: []
+        description:
+          - Users and public keys managed through ansible.posix.authorized_key.
+        elements: dict
+        options:
+          user:
+            type: str
+            required: true
+            description:
+              - Existing account and central authorized key filename.
+          key:
+            type: str
+            required: true
+            description:
+              - Public key, newline-separated public keys, or an HTTPS key URL.
+          exclusive:
+            type: bool
+            description:
+              - Override openssh_authorized_keys_exclusive for this account.
+          state:
+            type: str
+            choices:
+              - present
+              - absent
+            default: present
+            description:
+              - Whether the supplied keys are authorized.
+      openssh_authorized_keys_exclusive:
+        type: bool
+        default: false
+        description:
+          - Remove unlisted keys from each managed user file unless overridden per item.
+      openssh_authorized_keys_files:
+        type: list
+        default:
+          - .ssh/authorized_keys
+          - /etc/ssh/authorized_keys.d/%u
+        description:
+          - AuthorizedKeysFile paths using native sshd tokens.
+        elements: str
+      openssh_known_hosts:
+        type: dict
+        default: {}
+        description:
+          - Host names mapped to complete public host-key lines in the system known_hosts
+            file.
+      openssh_shosts_equiv:
+        type: dict
+        default: {}
+        description:
+          - Trusted hosts mapped to user names for explicitly configured host-based authentication.

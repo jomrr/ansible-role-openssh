@@ -1,0 +1,24 @@
+---
+# role: openssh
+# file: molecule/resources/tasks/profile.yml
+
+- name: OPENSSH | Apply the selected algorithm profile
+  ansible.builtin.include_role:
+    name: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+  vars:
+    openssh_crypto_profile: "{{ __openssh_test_profile }}"
+
+- name: OPENSSH | Authenticate using the selected profile
+  become: true
+  become_user: root
+  ansible.builtin.command:
+    argv:
+      - ssh
+      - -i
+      - /tmp/openssh-molecule-key
+      - -oBatchMode=yes
+      - -oStrictHostKeyChecking=no
+      - -oUserKnownHostsFile=/dev/null
+      - openssh-test@localhost
+      - 'true'
+  changed_when: false

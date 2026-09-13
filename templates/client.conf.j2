@@ -1,0 +1,13 @@
+# Managed by ansible.
+# file: {{ template_destpath }}
+Host *
+{% for __openssh_host, __openssh_options in openssh_client_hosts.items() %}
+Host {{ __openssh_host }}
+{% for __openssh_option, __openssh_value in __openssh_options.items() %}
+    {{ __openssh_option }} {{ __openssh_value }}
+{% endfor %}
+{% endfor %}
+Host *
+{% for __openssh_option, __openssh_value in (__openssh_platform_client | combine(openssh_client_defaults, openssh_client_options)).items() %}
+    {{ __openssh_option }} {{ __openssh_value }}
+{% endfor %}

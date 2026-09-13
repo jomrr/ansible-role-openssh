@@ -1,11 +1,38 @@
 ---
-# role: ansible-role-ssh
+# role: openssh
 # file: vars/Debian.yml
 
-ssh_packages:
+__openssh_client_config: /etc/ssh/ssh_config
+__openssh_client_directory: /etc/ssh/ssh_config.d
+__openssh_client_dropin: /etc/ssh/ssh_config.d/00-ansible.conf
+__openssh_server_config: /etc/ssh/sshd_config
+__openssh_server_directory: /etc/ssh/sshd_config.d
+__openssh_server_dropin: /etc/ssh/sshd_config.d/00-ansible.conf
+__openssh_moduli_file: /etc/ssh/moduli
+__openssh_known_hosts_file: /etc/ssh/ssh_known_hosts
+__openssh_shosts_file: /etc/ssh/shosts.equiv
+__openssh_client_validate: /usr/bin/ssh -G -F %s localhost
+__openssh_server_validate: /usr/sbin/sshd -t -f %s
+__openssh_server_check:
+  - /usr/sbin/sshd
+  - -t
+__openssh_runtime_directory: /run/sshd
+__openssh_runtime_mode: '0755'
+__openssh_platform_client:
+  GSSAPIAuthentication: 'no'
+__openssh_platform_server:
+  UsePAM: 'yes'
+  GSSAPIAuthentication: 'no'
+  KerberosAuthentication: 'no'
+__openssh_client_packages:
   - openssh-client
-
-sshd_packages:
+__openssh_server_packages:
   - openssh-server
-
-sshd_service_name: ssh
+__openssh_service: ssh
+__openssh_client_crypto_dropin: /etc/ssh/ssh_config.d/99-ansible-crypto.conf
+__openssh_server_crypto_dropin: /etc/ssh/sshd_config.d/99-ansible-crypto.conf
+__openssh_vendor_client: ''
+__openssh_vendor_server: ''
+__openssh_socket_units: []
+__openssh_client_crypto_config: /etc/ssh/ssh_config.ansible
+__openssh_server_crypto_config: /etc/ssh/sshd_config.ansible

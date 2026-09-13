@@ -1,244 +1,655 @@
-# ansible-role-ssh [![Build Status](https://travis-ci.org/jam82/ansible-role-ssh.svg?branch=master)](https://travis-ci.org/jam82/ansible-role-ssh)
+# Ansible Role: openssh
 
-Ansible role for setting up openssh.
+![GitHub](https://img.shields.io/github/license/jomrr/ansible-role-openssh)
+![GitHub last commit](https://img.shields.io/github/last-commit/jomrr/ansible-role-openssh)
+![GitHub issues](https://img.shields.io/github/issues-raw/jomrr/ansible-role-openssh)
+[![dev](https://img.shields.io/github/actions/workflow/status/jomrr/ansible-role-openssh/dev.yml?branch=dev&event=push&label=dev)](https://github.com/jomrr/ansible-role-openssh/actions/workflows/dev.yml?query=branch%3Adev)
+[![main](https://img.shields.io/github/actions/workflow/status/jomrr/ansible-role-openssh/main.yml?branch=main&event=push&label=main)](https://github.com/jomrr/ansible-role-openssh/actions/workflows/main.yml?query=branch%3Amain)
 
-- **ansible-role-ssh**
-  - [Supported Platforms](#supported-platforms)
-  - [Requirements](#requirements)
-  - [Defaults and Variables](#defaults-and-variables)
-    - [defaults/main/main.yml](#defaultsmainmainyml)
-    - [defaults/main/ssh.yml](#defaultsmainsshyml)
-    - [defaults/main/sshd.yml](#defaultsmainsshdyml)
-    - [defaults/main/sshd_authentication.yml](#defaultsmainsshdauthenticationyml)
-    - [defaults/main/sshd_directives.yml](#defaultsmainsshddirectivesyml)
-    - [defaults/main/sshd_gssapi.yml](#defaultsmainsshdgssapiyml)
-    - [defaults/main/sshd_kerberos.yml](#defaultsmainsshdkerberosyml)
-  - [Dependencies](#dependencies)
-  - [Scenarios and example playbooks](#scenarios-and-example-playbooks)
-    - [Running on localhost](#running-on-localhost)
-    - [Public Key Authentication only for remote host](#public-key-authentication-only-for-remote-host)
-  - [License and Author](#license-and-author)
-  - [References](#references)
+Install and configure OpenSSH.
 
-## Supported Platforms
+## Purpose
 
-- Amazon Linux 2
-- Archlinux
-- Centos 7, 8
-- Debian 9, 10
-- Raspbian 9, 10
-- OpenSuse Leap 15
-- OpenSuse Tumbleweed
-- Oracle Linux 7, 8
-- Ubuntu 16.04, 18.04, 20.04
+Install and configure OpenSSH clients and servers, manage host and authorized
+keys, and keep the server enabled and started.
+
+## Scope
+
+### Managed
+
+- Client and server hardening drop-ins, host-specific client options and server
+  Match rules.
+- Host keys, central authorized keys, known hosts and optional host-based trust
+  data.
+- A filtered DH moduli file derived from the package-owned source.
+
+### Not Managed
+
+- System-wide crypto-policy selection, FIPS activation, firewall rules and
+  account provisioning.
+- OS-wide CIS or STIG compliance, MFA enrollment, PAM authentication changes and
+  login banners.
 
 ## Requirements
 
-Ansible 2.7 or higher is required for defaults/main/*.yml to work.
-
-OpenSSH Version 6.3 or above for `ssh -Q` to work.
-
-## Defaults and Variables
-
-The default values for all variables are stored in the following files:
-
-- defaults/main/main.yml
-- defaults/main/ssh.yml
-- defaults/main/sshd.yml
-- defaults/main/sshd_authentication.yml
-- defaults/main/sshd_directives.yml
-- defaults/main/sshd_gssapi.yml
-- defaults/main/sshd_hostbased.yml
-- defaults/main/sshd_kerberos.yml
-
-### defaults/main/main.yml
-
-The file main.yml contains variables with defaults values that affect both, ssh client and sshd (the server).
-
-| variable | default value | description |
-| -------- | ------------- | ----------- |
-| ssh_enabled | false | determine whether role is enabled (true) or not (false) |
-
-The set of allowed algorithms is stored in the dict ssh_algorithms and is used to intersect with the detected supported algorithms:
-
-```yaml
-ssh_algorithms:
-  ciphers:
-    - chacha20-poly1305@openssh.com
-    - aes256-gcm@openssh.com
-    - aes128-gcm@openssh.com
-    - aes256-ctr
-    - aes192-ctr
-    - aes128-ctr
-  kexs:
-    - sntrup4591761x25519-sha512@tinyssh.org
-    - curve25519-sha256@libssh.org
-    - curve25519-sha256
-    - diffie-hellman-group18-sha512
-    - diffie-hellman-group16-sha512
-    - diffie-hellman-group14-sha256
-    - diffie-hellman-group-exchange-sha256
-  hostkeys:
-    - ssh-ed25519-cert-v01@openssh.com
-    - rsa-sha2-512-cert-v01@openssh.com
-    - rsa-sha2-256-cert-v01@openssh.com
-    - ssh-ed25519
-    - rsa-sha2-512
-    - rsa-sha2-256
-  macs:
-    - hmac-sha2-512-etm@openssh.com
-    - hmac-sha2-256-etm@openssh.com
-    - umac-128-etm@openssh.com
-    - hmac-sha2-512
-    - hmac-sha2-256
-```
-
-### defaults/main/ssh.yml
-
-This file is for /etc/ssh/ssh_config default settings.
-
-| variable | default value | description |
-| -------- | ------------- | ----------- |
-| ssh_enabled | True | enable configuration of /etc/ssh/ssh_config |
-| ssh_deploy_key | '~/.ssh/id_ed25519.pub' | local publickey that is added to remote users authorized_keys file, so you do not lock yourself out, because the default configuration of this role is to only allow pubkey authentication. |
-| ssh_conf_backup | 'no' | create a backup when replacing /etc/ssh/ssh_config |
-| ssh_host_config | {} | host specific configuration, see example after table. |
-| ssh_port | '22' | default port ssh tries to connect to |
-| ssh_address_family | 'inet' | address family type |
-| ssh_challenge_response_authentication | 'yes' | Enable challenge response (keyboard-interactive) authentication |
-| ssh_enable_ssh_keysign | 'no' | Enable ssh-keysign, must be enabled on a client, if you want to do hostbased authentication |
-| ssh_gssapi_authentication | 'no' | Enable GSSAPI authentication |
-| ssh_hostbased_authentication | 'no' | Enable hostbased authentication |
-| ssh_identity_files | [ '\~/.ssh/identity', '\~/.ssh/id_rsa', '\~/.ssh/id_ed25519' ] | List of paths where ssh looks for identity files |
-| ssh_password_authentication | 'yes' | Enable password authentication |
-| ssh_pubkey_authentication | 'yes' | Enable public key athentication |
-| ssh_rekey_limit_data | '512M' | Rekey limit (data), this is after 512M of data exchanged |
-| ssh_rekey_limit_time | '1800' | Rekey limit (time), this is after 1800 seconds |
-| ssh_strict_host_key_checking | 'ask' | Enable strict host key checking (known_hosts) |
-| ssh_test_create_key | False | This should be left to False, as it is used for testing only. When True, then an ssh key is generated for the remote user root and added to his authorized_keys file. In the pytest module `test_sshd.py` this is used to perform a login with `ssh -q localhost exit` to check if pubkey authentication is working. |
-
-```yaml
-ssh_host_config:
-  testhost.example.com:
-    X11Forwarding: 'yes'
-    GSSAPIAuthentication: 'yes'
-```
-
-### defaults/main/sshd.yml
-
-This file is for general /etc/ssh/sshd_config default settings.
-
-| variable | default value | description |
-| -------- | ------------- | ----------- |
-| sshd_enabled | true | enable configuration of /etc/ssh/sshd_config |
-| sshd_moduli_file | '/etc/ssh/moduli' | location of DH moduli file |
-| sshd_moduli_minimum | 3072 | minimum length od DH parameters |
-| sshd_host_key_regenerate | false | regenerate ssh host keys |
-| sshd_rsa_keylength | 4096 | length of RSA keys that are created by the role |
-| sshd_port | 22 | sshd listen port |
-| sshd_address_family | 'inet' | sshd address family |
-| sshd_listen_addr_v4 | [ "{{ ansible_default_ipv4.address \| default(ansible_all_ipv4_addresses[0]) }}" ] | IPv4 interface addresses sshd binds to |
-| sshd_listen_addr_v6 | [] | IPv6 interface addresses sshd binds to |
-
-... and many more tbd.
-
-### defaults/main/sshd_authentication.yml
-
-| variable | default value | description |
-| -------- | ------------- | ----------- |
-| sshd_login_grace_time | '60' | time to wait for login in seconds |
-| sshd_permit_root_login | 'no' |  |
-| sshd_max_auth_tries | 3 |  |
-| sshd_max_sessions | 3 |  |
-| sshd_pubkey_auth | 'yes' |  |
-| sshd_authorized_keys_file | '%h/.ssh/authorized_keys' | |
-| sshd_password_auth | 'no' | |
-| sshd_challenge_auth | 'no' | |
-| sshd_use_pam | 'yes' | With password and challenge response auth disabled, this runs pam session checks without pam authentication.  |
-| sshd_use_dns | 'yes' | Look up the remote host name and check that the resolved host name or the remote IP address maps back to the very same IP address. |
-
-### defaults/main/sshd_directives.yml
-
-| variable | default value | description |
-| -------- | ------------- | ----------- |
-| sshd_deny_users | [] | Deny ssh login for listed users. |
-| sshd_allow_users | [] | Allow ssh login for listed users only. |
-| sshd_deny_groups | [] | Deny ssh login for listed groups. |
-| sshd_allow_groups | [] | Allow ssh login for listed groups only. |
-| sshd_per_group_settings | {} | Group specific settings defined via `Match Group` directive. |
-| sshd_per_user_settings | {} | User specific settings defined via `Match User` directive. |
-
-### defaults/main/sshd_gssapi.yml
-
-| variable | default value | description |
-| -------- | ------------- | ----------- |
-
-### defaults/main/sshd_kerberos.yml
-
-| variable | default value | description |
-| -------- | ------------- | ----------- |
+- Ansible-core 2.20 or later and the collections listed in collections.yml.
+- OpenSSH with Include, Match final and RequiredRSASize support.
+- Existing accounts for openssh_authorized_keys entries.
 
 ## Dependencies
 
-None.
-
-## Scenarios and example playbooks
-
-This role by default configures pubkey authentication only, using reasonably secure settings. If you find a flaw, please feel free to comment.
-
-### Running on localhost
-
-### Public Key Authentication only for remote host
-
-This one is the easiest, just generate a local ssh key with
-
-```shell
-ssh-keygen -t ed25519
+```yaml
+collections:
+  - name: community.general
+    version: '>=12.0.0'
+  - name: community.crypto
+    version: '>=3.0.0'
+  - name: ansible.posix
+    version: '>=2.0.0'
 ```
 
-if you do not have one.
+## Role Variables
 
-Then you can use a playbook like this to deploy:
+### `openssh_backup`
+
+Type: `bool`. Required: `false`.
+
+Create module-provided backups before changing configuration and moduli files.
+
+Default:
+
+```yaml
+openssh_backup: true
+```
+
+### `openssh_crypto_profile`
+
+Type: `str`. Required: `false`.
+
+Algorithm fallback profile; system leaves native algorithm policy unchanged.
+
+Default:
+
+```yaml
+openssh_crypto_profile: system
+```
+
+### `openssh_crypto_options`
+
+Type: `dict`. Required: `false`.
+
+Algorithm fallback overrides for an explicitly selected non-system profile.
+
+Default:
+
+```yaml
+openssh_crypto_options: {}
+```
+
+### `openssh_rsa_minimum`
+
+Type: `int`. Required: `false`.
+
+RSA minimum used only when native configuration does not already specify one.
+Stronger or weaker system-policy values retain precedence; the fallback must be
+at least 3072 bits.
+
+Default:
+
+```yaml
+openssh_rsa_minimum: 3072
+```
+
+### `openssh_client_defaults`
+
+Type: `dict`. Required: `false`.
+
+Base client directives, merged with openssh_client_options.
+
+Default:
+
+```yaml
+openssh_client_defaults:
+  AddressFamily: any
+  ForwardAgent: 'no'
+  ForwardX11: 'no'
+  HashKnownHosts: 'yes'
+  HostbasedAuthentication: 'no'
+  KbdInteractiveAuthentication: 'no'
+  PasswordAuthentication: 'no'
+  PubkeyAuthentication: 'yes'
+  RekeyLimit: 1G 1h
+  StrictHostKeyChecking: 'yes'
+  Tunnel: 'no'
+```
+
+### `openssh_client_options`
+
+Type: `dict`. Required: `false`.
+
+Additional client directives and overrides using native SSH syntax.
+
+Default:
+
+```yaml
+openssh_client_options: {}
+```
+
+### `openssh_client_hosts`
+
+Type: `dict`. Required: `false`.
+
+Host patterns mapped to client directive dictionaries, before global defaults.
+
+Default:
+
+```yaml
+openssh_client_hosts: {}
+```
+
+### `openssh_server_defaults`
+
+Type: `dict`. Required: `false`.
+
+Base server directives, merged with openssh_server_options.
+
+Default:
+
+```yaml
+openssh_server_defaults:
+  AddressFamily: any
+  Port: 22
+  PermitRootLogin: 'no'
+  AuthenticationMethods: publickey
+  PubkeyAuthentication: 'yes'
+  PasswordAuthentication: 'no'
+  KbdInteractiveAuthentication: 'no'
+  PermitEmptyPasswords: 'no'
+  HostbasedAuthentication: 'no'
+  IgnoreRhosts: 'yes'
+  IgnoreUserKnownHosts: 'yes'
+  StrictModes: 'yes'
+  PermitUserEnvironment: 'no'
+  AllowAgentForwarding: 'no'
+  AllowTcpForwarding: 'no'
+  AllowStreamLocalForwarding: 'no'
+  GatewayPorts: 'no'
+  X11Forwarding: 'no'
+  X11UseLocalhost: 'yes'
+  PermitTunnel: 'no'
+  LoginGraceTime: 60
+  MaxAuthTries: 3
+  MaxSessions: 10
+  MaxStartups: 10:30:60
+  ClientAliveInterval: 300
+  ClientAliveCountMax: 1
+  LogLevel: VERBOSE
+  SyslogFacility: AUTHPRIV
+  RekeyLimit: 1G 1h
+  UseDNS: 'no'
+```
+
+### `openssh_server_options`
+
+Type: `dict`. Required: `false`.
+
+Additional server directives and overrides using native sshd syntax.
+
+Default:
+
+```yaml
+openssh_server_options: {}
+```
+
+### `openssh_listen_addresses`
+
+Type: `list`. Required: `false`.
+
+Explicit IPv4 or IPv6 listener addresses; an empty list uses native wildcard
+listeners.
+
+Default:
+
+```yaml
+openssh_listen_addresses: []
+```
+
+### `openssh_match_users`
+
+Type: `dict`. Required: `false`.
+
+User patterns mapped to Match User directive dictionaries.
+Accepted user-key algorithms and authorized-key sources may be restricted per
+match.
+
+Default:
+
+```yaml
+openssh_match_users: {}
+```
+
+### `openssh_match_groups`
+
+Type: `dict`. Required: `false`.
+
+Group patterns mapped to Match Group directive dictionaries.
+Accepted user-key algorithms and authorized-key sources may be restricted per
+match; MFA is opt-in.
+
+Default:
+
+```yaml
+openssh_match_groups: {}
+```
+
+### `openssh_host_keys`
+
+Type: `list`. Required: `false`.
+
+Managed host keys; Ed25519 keys are omitted on hosts running in FIPS mode.
+
+Default:
+
+```yaml
+openssh_host_keys:
+  - type: ed25519
+    path: /etc/ssh/ssh_host_ed25519_key
+  - type: ecdsa
+    size: 384
+    path: /etc/ssh/ssh_host_ecdsa_key
+  - type: rsa
+    size: 4096
+    path: /etc/ssh/ssh_host_rsa_key
+```
+
+### `openssh_host_key_regenerate`
+
+Type: `str`. Required: `false`.
+
+Native keypair regeneration policy; changing key type or size can rotate host
+identity.
+
+Default:
+
+```yaml
+openssh_host_key_regenerate: partial_idempotence
+```
+
+### `openssh_moduli_minimum`
+
+Type: `int`. Required: `false`.
+
+Minimum actual DH modulus bit length; existing safe primes are filtered without
+regeneration.
+
+Default:
+
+```yaml
+openssh_moduli_minimum: 3072
+```
+
+### `openssh_authorized_keys_directory`
+
+Type: `path`. Required: `false`.
+
+Central directory containing authorized key files named after their users.
+
+Default:
+
+```yaml
+openssh_authorized_keys_directory: /etc/ssh/authorized_keys.d
+```
+
+### `openssh_authorized_keys`
+
+Type: `list`. Required: `false`.
+
+Users and public keys managed through ansible.posix.authorized_key.
+
+Default:
+
+```yaml
+openssh_authorized_keys: []
+```
+
+### `openssh_authorized_keys_exclusive`
+
+Type: `bool`. Required: `false`.
+
+Remove unlisted keys from each managed user file unless overridden per item.
+
+Default:
+
+```yaml
+openssh_authorized_keys_exclusive: false
+```
+
+### `openssh_authorized_keys_files`
+
+Type: `list`. Required: `false`.
+
+AuthorizedKeysFile paths using native sshd tokens.
+
+Default:
+
+```yaml
+openssh_authorized_keys_files:
+  - .ssh/authorized_keys
+  - /etc/ssh/authorized_keys.d/%u
+```
+
+### `openssh_known_hosts`
+
+Type: `dict`. Required: `false`.
+
+Host names mapped to complete public host-key lines in the system known_hosts
+file.
+
+Default:
+
+```yaml
+openssh_known_hosts: {}
+```
+
+### `openssh_shosts_equiv`
+
+Type: `dict`. Required: `false`.
+
+Trusted hosts mapped to user names for explicitly configured host-based
+authentication.
+
+Default:
+
+```yaml
+openssh_shosts_equiv: {}
+```
+
+## Managed Files
+
+- `/etc/ssh/ssh_config.d/00-ansible.conf` Client authentication and host
+  settings.
+- `/etc/ssh/sshd_config.d/00-ansible.conf` Server authentication, forwarding and
+  Match settings.
+- `/etc/ssh/ssh_config.ansible` Client RSA and optional algorithm fallbacks,
+  included at the end of the native main file.
+- `/etc/ssh/sshd_config.ansible` Server RSA and optional algorithm fallbacks,
+  included after native global configuration and before its first Match block.
+- `/etc/ssh/moduli.ansible` Filtered DH moduli; the vendor source is retained.
+- `/etc/ssh/authorized_keys.d` Central authorized keys, alongside
+  /etc/ssh/ssh_known_hosts and /etc/ssh/shosts.equiv.
+- `/etc/ssh/ssh_config and /etc/ssh/sshd_config` Native main files retained,
+  with drop-in and fallback Includes enabled.
+
+## Check Mode
+
+Host keys, moduli and configuration support check mode.
+
+- Initial check mode on a machine without OpenSSH cannot validate against
+  executables or keys not yet installed.
+
+## Service Behavior
+
+Configuration and host-key changes validate the complete server configuration
+before restarting the service.
+
+### Handlers
+
+- Ubuntu's native ssh.socket is reloaded and restarted after configuration
+  changes and remains enabled and started alongside the SSH service.
+
+## Security Notes
+
+- The default system profile uses native algorithm settings and their Include
+  order. Where no native policy specifies algorithms, the installed OpenSSH
+  defaults apply.
+- OpenSSH normally uses the first obtained value. Optional role profiles and
+  openssh_crypto_options supply late fallbacks. Earlier native settings win even
+  when weaker. A minus-prefixed list filters OpenSSH defaults, not system-policy
+  values. Enforce restrictions through the native policy on policy-managed
+  hosts. Role profiles cover SSH algorithm selection; full CIS, STIG or BSI
+  compliance requires additional OS controls.
+- RequiredRSASize uses openssh_rsa_minimum (3072 bits) only where native
+  configuration does not set it. An earlier 4096-bit or 2048-bit policy remains
+  effective. To enforce a minimum on such hosts, change the native policy, for
+  example its RSA size setting, independently. This check covers RSA
+  authentication/host keys and is separate from generating the role-managed
+  4096-bit RSA host key.
+- The client reads role fallbacks in a final pass; the server reads them after
+  native global settings, before its first main-file Match block. Add native
+  global settings before these fallback includes. Verify effective settings with
+  ssh -G hostname and sshd -T, using sshd -T -C user=NAME,host=HOST,addr=IP for
+  connection-specific rules.
+- Optional modern retains the installed OpenSSH default ordering, removes legacy
+  CBC/SHA-1/DSA and sub-3072-bit fixed DH choices, and automatically inherits
+  newly enabled algorithms such as hybrid post-quantum KEX.
+- cis uses AES-GCM/CTR and SHA-2 MACs as a conservative mapping of the CIS RHEL
+  9 SSH recommendations, including the benchmark restrictions on ChaCha20 and
+  EtM. modern retains supported ChaCha20 and SHA-2 EtM on patched OpenSSH.
+- stig adds conventional NIST ECDH/DH and ECDSA/RSA-SHA2 restrictions. FIPS
+  validation depends on the operating system's cryptographic implementation and
+  policy.
+- bsi maps TR-02102-4 version 2026-01 to supported AES-GCM/CTR, SHA-2 MAC, NIST
+  ECDH/DH and NIST ECDSA choices. The document does not yet recommend OpenSSH's
+  X25519-based hybrid KEX or Ed25519 as an SSH signature algorithm. Its
+  classical KEX recommendation ends in 2031.
+- The default server requires public-key authentication and disables password
+  and keyboard-interactive authentication. The client also disables both
+  interactive methods unless explicitly enabled for selected destinations. TCP,
+  Unix-domain socket, agent and X11 forwarding are disabled by default.
+- ClientAliveInterval and ClientAliveCountMax detect unresponsive clients; they
+  do not log out a responsive but idle user. The optional ChannelTimeout example
+  closes idle session channels, not the complete SSH connection, and requires a
+  supporting OpenSSH version.
+- MFA is opt-in. Token enrollment and PAM authentication are managed separately;
+  examples are below.
+- Default private host-key mode is 0600. A changed type or size can rotate an
+  existing key under partial_idempotence and requires known_hosts updates. The
+  never and fail policies can instead preserve host identity or reject
+  mismatches. Ed25519 is omitted when the host is in FIPS mode.
+- DH moduli are filtered to tested safe primes of at least 3072 actual bits by
+  default. The vendor source is retained and package updates are incorporated on
+  the next convergence.
+
+## Operational Notes
+
+- Native directive values use quoted yes/no strings and space-separated lists.
+  The defaults dictionaries can be replaced explicitly; options dictionaries
+  merge into them.
+- Vendor PAM integration and SFTP subsystem paths are retained. On SUSE, absent
+  local main configuration files are copied from /usr/etc/ssh.
+
+## Supported Platforms
+
+| OS Family | Distribution | Version | Container Image |
+| --------- | ------------ | ------- | --------------- |
+| RedHat | AlmaLinux | latest | [jomrr/molecule-almalinux:latest](https://hub.docker.com/r/jomrr/molecule-almalinux) |
+| Debian | Debian | latest | [jomrr/molecule-debian:latest](https://hub.docker.com/r/jomrr/molecule-debian) |
+| RedHat | Fedora | latest | [jomrr/molecule-fedora:latest](https://hub.docker.com/r/jomrr/molecule-fedora) |
+| Suse | OpenSuse Leap | latest | [jomrr/molecule-opensuse-leap:latest](https://hub.docker.com/r/jomrr/molecule-opensuse-leap) |
+| Suse | OpenSuse Tumbleweed | latest | [jomrr/molecule-opensuse-tumbleweed:latest](https://hub.docker.com/r/jomrr/molecule-opensuse-tumbleweed) |
+| Debian | Ubuntu | latest | [jomrr/molecule-ubuntu:latest](https://hub.docker.com/r/jomrr/molecule-ubuntu) |
+
+## Example Playbook
+
+### Default hardening with native algorithm policy
+
+Manage SSH using explicit public keys for an existing administrative account.
 
 ```yaml
 ---
-# play: test-site
-# file: site.yml
-
-- hosts: all
+- name: Configure OpenSSH
+  hosts: ssh_servers
+  gather_facts: true
   roles:
-    - role: ansible-role-ssh
+    - role: jomrr.openssh
+      openssh_authorized_keys:
+        - user: deploy
+          key: "{{ lookup('ansible.builtin.file', 'files/deploy.pub') }}"
+      openssh_server_options:
+        AllowUsers: deploy
 ```
 
-If you already have an existing rsa key, change the following variable:
+### BSI algorithm mapping
+
+Apply the BSI SSH subset where system crypto policies do not already set the algorithms.
 
 ```yaml
-ssh_deploy_key: '~/.ssh/id_rsa.pub'
+openssh_crypto_profile: bsi
+openssh_server_options:
+  AllowGroups: ssh-admins
+  Banner: /etc/issue.net
+openssh_match_groups:
+  sftp-users:
+    ForceCommand: internal-sftp
+openssh_match_users:
+  backup:
+    AllowTcpForwarding: local
 ```
 
-You can do this in your inventory (host or group variable) or just from the commandline:
+### Optional modern algorithm fallbacks
 
-```shell
-ansible-playbook site.yml --extra-vars '{"ssh_deploy_key": "~/.ssh/id_rsa.pub"}'
+Use modern fallbacks where native configuration does not set algorithms.
+
+```yaml
+openssh_crypto_profile: modern
+openssh_rsa_minimum: 3072
 ```
 
-## License and Author
+### Configure a client host pattern
 
-- Author:: Jonas Mauer (<jam@kabelmail.net>)
-- Copyright:: 2019, Jonas Mauer
+Set the remote user for selected destinations alongside server hardening.
 
-Licensed under MIT License;
-See LICENSE file in repository.
+```yaml
+openssh_client_hosts:
+  '*.example.net':
+    User: deploy
+```
+
+### Optional Nitrokey FIDO2 authentication
+
+For a Nitrokey with FIDO2 support, such as Nitrokey 3, generate the identity on
+the client, for example with
+`ssh-keygen -t ed25519-sk -O verify-required -f ~/.ssh/id_admin_nitrokey`.
+Set up the token PIN first. Use `ecdsa-sk` where required by token support or
+the applicable policy. Deploy only the public key to the server; retain the
+private key handle on the client. The server does not need the USB token or
+a FIDO PAM module. Select the identity with `ssh -i ~/.ssh/id_admin_nitrokey`.
+
+The existing account must belong to ssh-fido. Both the client and the server
+must support OpenSSH security-key signatures, and the native crypto policy
+must permit the chosen SK algorithms. The stig and bsi fallback allowlists
+do not include them; review compatibility before using this example. A Match
+allowlist is an explicit authentication override, not an automatic
+intersection with the system policy.
+
+Requiring verification enforces the authenticator's PIN or biometric check
+alongside possession. Touch alone proves presence, not a second factor.
+Restricting accepted algorithms to SK keys prevents ordinary RSA, ECDSA or
+Ed25519 keys from bypassing the verification requirement. This example uses
+plain public keys; SSH certificates require their corresponding SK types
+and separately managed certificate trust.
+
+Supply the primary and spare public keys together in one entry per account.
+The central-only Match rule excludes the user's own authorized_keys file;
+review existing AuthorizedKeysCommand and certificate/CA trust separately.
+Nitrokey Pro/Start use an OpenPGP smartcard integration instead of this FIDO2
+flow. Their ordinary SSH signatures cannot prove a per-login PIN check to
+sshd through PubkeyAuthOptions.
+
+```yaml
+openssh_match_groups:
+  ssh-fido:
+    AuthenticationMethods: publickey
+    PubkeyAcceptedAlgorithms: sk-ssh-ed25519@openssh.com,sk-ecdsa-sha2-nistp256@openssh.com
+    PubkeyAuthOptions: touch-required verify-required
+    AuthorizedKeysFile: /etc/ssh/authorized_keys.d/%u
+openssh_authorized_keys:
+  - user: alice
+    exclusive: true
+    key: |
+      {{ lookup('ansible.builtin.file', 'files/alice-nitrokey.pub') }}
+      {{ lookup('ansible.builtin.file', 'files/alice-spare.pub') }}
+```
+
+### Optional public key and Google Authenticator TOTP
+
+Install the distribution's package providing pam_google_authenticator.so
+and enroll each affected account separately. The module validates TOTP
+locally; a Google account or online Google verification is not required.
+Compatible TOTP applications can hold the enrolled secret. Protect the
+per-user secret file with user ownership and mode 0600, keep clocks
+synchronized and store recovery codes separately. Do not place secrets or
+QR codes in inventory or logs.
+
+Configure /etc/pam.d/sshd through the distribution's supported PAM mechanism.
+Its authentication path must require `auth required pam_google_authenticator.so`
+without `nullok`, and must not contain a success path bypassing the OTP check.
+Preserve native account and session processing. This is a PAM fragment, not
+a replacement file: retaining the native password authentication stack may
+require the account password as well as the OTP; an OTP-only authentication
+stack requires a deliberate, separately managed PAM configuration. A global
+PAM OTP requirement also affects other keyboard-interactive logins, so align
+PAM scope with the selected group.
+
+The existing account must belong to ssh-totp. The comma in
+`publickey,keyboard-interactive:pam` requires both methods in sequence;
+a space would introduce alternative authentication paths. PasswordAuthentication
+remains disabled, but PAM can still request a password over keyboard-interactive.
+The role retains UsePAM yes; it does not modify the authentication stack.
+
+Enable keyboard-interactive on the connecting client for these destinations
+as shown below, or with `ssh -o KbdInteractiveAuthentication=yes HOST`.
+A private SSH key and a TOTP seed are both possession credentials; their
+combination alone does not guarantee two distinct factor categories.
+Retaining a required account password plus TOTP adds knowledge and possession.
+TOTP is phishable; prefer verified hardware-key authentication where suitable.
+Avoid overlapping FIDO/TOTP groups unless Match precedence is deliberately
+designed and checked with sshd -T -C and an actual login.
+
+```yaml
+openssh_match_groups:
+  ssh-totp:
+    AuthenticationMethods: publickey,keyboard-interactive:pam
+    KbdInteractiveAuthentication: 'yes'
+openssh_client_hosts:
+  '*.admin.example.net':
+    KbdInteractiveAuthentication: 'yes'
+```
+
+### Optional idle administrative session timeout
+
+Close idle session channels after 15 minutes on OpenSSH versions supporting ChannelTimeout.
+
+```yaml
+openssh_match_groups:
+  ssh-admins:
+    ChannelTimeout: session=15m
+```
 
 ## References
 
-- [FreeBSD Manual Pages - sshd_config\(5\)](https://www.freebsd.org/cgi/man.cgi?sshd_config)
-- [Uni Konstanz - Starke Authentifizioerungsmethoden](https://www.kim.uni-konstanz.de/e-mail-und-internet/it-sicherheit-und-privatsphaere/sicherer-server-it-dienst/linux-fernadministration-mit-pam-und-ssh/starke-authentifizierungsmethoden/)
-- [SSH absichern - Stephan Klein](https://klein-gedruckt.de/2015/04/ssh-absichern/)
-- [OpenSSH Tip: Check Syntax Errors before Restarting SSHD Server](https://www.cyberciti.biz/tips/checking-openssh-sshd-configuration-syntax-errors.html)
-- [BetterCrypto.org: OpenSSH](https://bettercrypto.org/#_openssh)
-- [Abe Singer - Hostbased SSH](https://www.usenix.org/system/files/login/articles/09_singer.pdf)
-- [DNS-based SSH host key verification](https://ayesh.me/sshfp-verification)
-- [Hardening SSH](https://medium.com/@jasonrigden/hardening-ssh-1bcb99cd4cef)
-- [How to create an SSH certificate authority](https://jameshfisher.com/2018/03/16/how-to-create-an-ssh-certificate-authority/)
-- [SSH Host Key Signing - ein unterschätztes Feature](https://www.sipgate.de/blog/ssh-host-key-signing-ein-unterschaetztes-feature)
+- [OpenSSH client configuration](https://man.openbsd.org/ssh_config.5)
+- [OpenSSH server configuration](https://man.openbsd.org/sshd_config.5)
+- [OpenSSH key generation](https://man.openbsd.org/ssh-keygen.1)
+- [Nitrokey FIDO2 SSH](https://docs.nitrokey.com/en/nitrokeys/features/fido2/ssh)
+- [Nitrokey OpenPGP SSH](https://docs.nitrokey.com/en/nitrokeys/features/openpgp-card/ssh/index)
+- [Google Authenticator PAM](https://github.com/google/google-authenticator-libpam/blob/master/README.md)
+- [NIST authentication factors](https://pages.nist.gov/800-63-4/sp800-63/model/)
+- [OpenSSH DH parser](https://github.com/openssh/openssh-portable/blob/master/dh.c)
+- [Red Hat crypto policies](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/security_hardening/using-the-system-wide-cryptographic-policies_security-hardening)
+- [SUSE OpenSSH hardening](https://documentation.suse.com/sles/15-SP7/html/SLES-all/cha-ssh.html)
+- [Ubuntu SSH cryptography](https://ubuntu.com/server/docs/explanation/crypto/openssh-crypto-configuration/)
+- [CIS RHEL 9 mappings](https://github.com/ComplianceAsCode/content/blob/master/products/rhel9/controls/cis_rhel9.yml)
+- [DISA STIG RHEL 9 mappings](https://github.com/ComplianceAsCode/content/blob/master/products/rhel9/controls/stig_rhel9.yml)
+- [BSI TR-02102-4](https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/TechnischeRichtlinien/TR02102/BSI-TR-02102-4.pdf?__blob=publicationFile)
+
+## Author
+
+[Jonas Mauer](https://github.com/jomrr)
+
+## License
+
+This project is licensed under the MIT License.
+See [LICENSE](LICENSE) for the full license text.
+
+Copyright (c) 2019 Jonas Mauer.

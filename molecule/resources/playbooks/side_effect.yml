@@ -1,0 +1,196 @@
+---
+# role: openssh
+# file: molecule/resources/playbooks/side_effect.yml
+
+- name: OPENSSH | Exercise changes on an existing SSH server
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: OPENSSH | Read the served ECDSA host key before rotation
+      ansible.builtin.command:
+        argv: [ssh-keyscan, -t, ecdsa, localhost]
+      changed_when: false
+      register: __openssh_before_rotation
+
+    - name: OPENSSH | Rotate host keys and activate a Match User command
+      ansible.builtin.include_role:
+        name: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+      vars:
+        openssh_host_key_regenerate: always
+        openssh_match_users:
+          openssh-test:
+            ForceCommand: /usr/bin/true
+            PubkeyAcceptedAlgorithms: ecdsa-sha2-nistp384
+            AuthorizedKeysFile: /etc/ssh/authorized_keys.d/%u
+        openssh_match_groups:
+          openssh-test:
+            AllowTcpForwarding: local
+
+    - name: OPENSSH | Read the newly served ECDSA host key
+      ansible.builtin.command:
+        argv: [ssh-keyscan, -t, ecdsa, localhost]
+      changed_when: false
+      register: __openssh_after_rotation
+      failed_when: >-
+        __openssh_after_rotation.rc != 0 or
+        __openssh_after_rotation.stdout == __openssh_before_rotation.stdout
+
+    - name: OPENSSH | Verify that the Match User command is enforced
+      become: true
+      become_user: root
+      ansible.builtin.command:
+        argv:
+          - ssh
+          - -i
+          - /tmp/openssh-molecule-key
+          - -oBatchMode=yes
+          - -oStrictHostKeyChecking=no
+          - -oUserKnownHostsFile=/dev/null
+          - openssh-test@localhost
+          - exit 99
+      changed_when: false
+
+    - name: OPENSSH | Check a requested rotation without applying it
+      ansible.builtin.include_role:
+        name: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+        apply:
+          check_mode: true
+      vars:
+        openssh_host_key_regenerate: always
+
+    - name: OPENSSH | Verify check mode preserved the served host identity
+      ansible.builtin.command:
+        argv: [ssh-keyscan, -t, ecdsa, localhost]
+      changed_when: false
+      register: __openssh_after_check
+      failed_when: >-
+        __openssh_after_check.rc != 0 or
+        __openssh_after_check.stdout != __openssh_after_rotation.stdout
+
+    - name: OPENSSH | Exercise supported algorithm profiles
+      ansible.builtin.include_tasks: ../tasks/profile.yml
+      loop: [modern, cis, stig, bsi, system]
+      loop_control:
+        loop_var: __openssh_test_profile
+        label: "{{ __openssh_test_profile }}"
+
+    - name: OPENSSH | Install administrator policy fixtures before vendor policy
+      become: true
+      become_user: root
+      ansible.builtin.copy:
+        dest: "{{ __openssh_policy_path }}/10-molecule-policy.conf"
+        content: |
+          Ciphers aes256-ctr
+          RequiredRSASize 4096
+        owner: root
+        group: root
+        mode: '0644'
+      loop:
+        - /etc/ssh/ssh_config.d
+        - /etc/ssh/sshd_config.d
+      loop_control:
+        loop_var: __openssh_policy_path
+
+    - name: OPENSSH | Set a native main-file policy after the drop-in includes
+      become: true
+      become_user: root
+      ansible.builtin.blockinfile:
+        path: "{{ __openssh_policy_path }}"
+        marker: '# {mark} MOLECULE NATIVE POLICY'
+        insertbefore: '^# BEGIN OPENSSH ROLE FALLBACKS$|^Include /etc/ssh/sshd_config.ansible$'
+        block: MACs hmac-sha2-512
+      loop:
+        - /etc/ssh/ssh_config
+        - /etc/ssh/sshd_config
+      loop_control:
+        loop_var: __openssh_policy_path
+
+    - name: OPENSSH | Apply fallbacks alongside native administrator policy
+      ansible.builtin.include_role:
+        name: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+      vars:
+        openssh_crypto_profile: modern
+
+    - name: OPENSSH | Read effective client policy after native configuration
+      ansible.builtin.command:
+        argv: [ssh, -G, localhost]
+      changed_when: false
+      register: __openssh_native_client
+
+    - name: OPENSSH | Read effective server policy after native configuration
+      become: true
+      become_user: root
+      ansible.builtin.command:
+        argv: [sshd, -T]
+      changed_when: false
+      register: __openssh_native_server
+
+    - name: OPENSSH | Verify native administrator policy retains precedence
+      ansible.builtin.assert:
+        that:
+          - "'ciphers aes256-ctr' in (__openssh_native_client.stdout_lines | map('lower'))"
+          - "'ciphers aes256-ctr' in (__openssh_native_server.stdout_lines | map('lower'))"
+          - "'requiredrsasize 4096' in (__openssh_native_client.stdout_lines | map('lower'))"
+          - "'requiredrsasize 4096' in (__openssh_native_server.stdout_lines | map('lower'))"
+          - >-
+            ansible_facts.os_family != 'Debian' or
+            'macs hmac-sha2-512' in (__openssh_native_client.stdout_lines | map('lower'))
+          - >-
+            ansible_facts.os_family != 'Debian' or
+            'macs hmac-sha2-512' in (__openssh_native_server.stdout_lines | map('lower'))
+        quiet: true
+
+    - name: OPENSSH | Remove native administrator drop-in fixtures
+      become: true
+      become_user: root
+      ansible.builtin.file:
+        path: "{{ __openssh_policy_path }}/10-molecule-policy.conf"
+        state: absent
+      loop:
+        - /etc/ssh/ssh_config.d
+        - /etc/ssh/sshd_config.d
+      loop_control:
+        loop_var: __openssh_policy_path
+
+    - name: OPENSSH | Remove native main-file policy fixtures
+      become: true
+      become_user: root
+      ansible.builtin.blockinfile:
+        path: "{{ __openssh_policy_path }}"
+        marker: '# {mark} MOLECULE NATIVE POLICY'
+        state: absent
+      loop:
+        - /etc/ssh/ssh_config
+        - /etc/ssh/sshd_config
+      loop_control:
+        loop_var: __openssh_policy_path
+
+    - name: OPENSSH | Move the listener to another port
+      ansible.builtin.include_role:
+        name: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+      vars:
+        openssh_server_options:
+          Port: 22222
+
+    - name: OPENSSH | Authenticate on the changed port
+      become: true
+      become_user: root
+      ansible.builtin.command:
+        argv:
+          - ssh
+          - -p22222
+          - -i
+          - /tmp/openssh-molecule-key
+          - -oBatchMode=yes
+          - -oStrictHostKeyChecking=no
+          - -oUserKnownHostsFile=/dev/null
+          - openssh-test@localhost
+          - 'true'
+      changed_when: false
+
+    - name: OPENSSH | Verify the old port is closed
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 22
+        state: stopped
+        timeout: 5

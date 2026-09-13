@@ -1,0 +1,56 @@
+---
+# role: openssh
+# file: vars/main.yml
+
+__openssh_crypto_profiles:
+  system: {}
+  modern:
+    Ciphers: -3des-*,*-cbc
+    MACs: -hmac-md5*,hmac-sha1*,umac-64*
+    KexAlgorithms: -diffie-hellman-group1-*,diffie-hellman-group14-*,diffie-hellman-group-exchange-sha1
+    HostKeyAlgorithms: -ssh-rsa*,ssh-dss*
+    PubkeyAcceptedAlgorithms: -ssh-rsa*,ssh-dss*
+    CASignatureAlgorithms: -ssh-rsa,ssh-dss
+  cis:
+    Ciphers: aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+    MACs: hmac-sha2-512,hmac-sha2-256
+    KexAlgorithms: -diffie-hellman-group1-*,diffie-hellman-group14-*,diffie-hellman-group-exchange-sha1
+    HostKeyAlgorithms: -ssh-rsa*,ssh-dss*
+    PubkeyAcceptedAlgorithms: -ssh-rsa*,ssh-dss*
+    CASignatureAlgorithms: -ssh-rsa,ssh-dss
+  stig:
+    Ciphers: aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+    MACs: hmac-sha2-512,hmac-sha2-256
+    KexAlgorithms: ecdh-sha2-nistp384,ecdh-sha2-nistp256,ecdh-sha2-nistp521,diffie-hellman-group16-sha512,diffie-hellman-group-exchange-sha256
+    HostKeyAlgorithms: ecdsa-sha2-nistp384,ecdsa-sha2-nistp256,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256
+    PubkeyAcceptedAlgorithms: ecdsa-sha2-nistp384,ecdsa-sha2-nistp256,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256
+    CASignatureAlgorithms: ecdsa-sha2-nistp384,ecdsa-sha2-nistp256,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256
+  bsi:
+    Ciphers: aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+    MACs: hmac-sha2-512,hmac-sha2-256
+    KexAlgorithms: ecdh-sha2-nistp384,ecdh-sha2-nistp256,ecdh-sha2-nistp521,diffie-hellman-group16-sha512,diffie-hellman-group-exchange-sha256
+    HostKeyAlgorithms: ecdsa-sha2-nistp384,ecdsa-sha2-nistp256,ecdsa-sha2-nistp521
+    PubkeyAcceptedAlgorithms: ecdsa-sha2-nistp384,ecdsa-sha2-nistp256,ecdsa-sha2-nistp521
+    CASignatureAlgorithms: ecdsa-sha2-nistp384,ecdsa-sha2-nistp256,ecdsa-sha2-nistp521
+__openssh_crypto_directives:
+  - Ciphers
+  - MACs
+  - KexAlgorithms
+  - HostKeyAlgorithms
+  - PubkeyAcceptedAlgorithms
+  - CASignatureAlgorithms
+__openssh_reserved_directives:
+  - include
+  - host
+  - match
+  - hostkey
+  - authorizedkeysfile
+  - modulifile
+  - subsystem
+  - ciphers
+  - macs
+  - kexalgorithms
+  - hostkeyalgorithms
+  - pubkeyacceptedalgorithms
+  - casignaturealgorithms
+  - requiredrsasize

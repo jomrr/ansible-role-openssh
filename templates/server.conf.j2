@@ -1,0 +1,28 @@
+# Managed by ansible.
+# file: {{ template_destpath }}
+{% for __openssh_option, __openssh_value in (__openssh_platform_server | combine(openssh_server_defaults, openssh_server_options)).items() %}
+{{ __openssh_option }} {{ __openssh_value }}
+{% endfor %}
+{% for __openssh_address in openssh_listen_addresses %}
+ListenAddress {{ __openssh_address }}
+{% endfor %}
+{% for __openssh_host_key in openssh_host_keys %}
+{% if __openssh_host_key.type != 'ed25519' or not ansible_facts.fips %}
+HostKey {{ __openssh_host_key.path }}
+{% endif %}
+{% endfor %}
+ModuliFile /etc/ssh/moduli.ansible
+AuthorizedKeysFile {{ openssh_authorized_keys_files | join(' ') }}
+{% for __openssh_group, __openssh_options in openssh_match_groups.items() %}
+Match Group {{ __openssh_group }}
+{% for __openssh_option, __openssh_value in __openssh_options.items() %}
+    {{ __openssh_option }} {{ __openssh_value }}
+{% endfor %}
+{% endfor %}
+{% for __openssh_user, __openssh_options in openssh_match_users.items() %}
+Match User {{ __openssh_user }}
+{% for __openssh_option, __openssh_value in __openssh_options.items() %}
+    {{ __openssh_option }} {{ __openssh_value }}
+{% endfor %}
+{% endfor %}
+Match all

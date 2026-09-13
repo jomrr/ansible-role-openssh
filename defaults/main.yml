@@ -1,0 +1,147 @@
+---
+# role: openssh
+# file: defaults/main.yml
+
+# Create module-provided backups before changing configuration and moduli files.
+openssh_backup: true
+
+# Algorithm fallback profile; system leaves native algorithm policy unchanged.
+openssh_crypto_profile: system
+# openssh_crypto_profile: modern
+
+# Algorithm fallback overrides for an explicitly selected non-system profile.
+openssh_crypto_options: {}
+# openssh_crypto_options:
+#   Ciphers: aes256-gcm@openssh.com,aes256-ctr
+
+# RSA minimum used only when native configuration does not already specify one.
+# Stronger or weaker system-policy values retain precedence.
+openssh_rsa_minimum: 3072
+
+# Base client directives, merged with openssh_client_options.
+openssh_client_defaults:
+  AddressFamily: any
+  ForwardAgent: 'no'
+  ForwardX11: 'no'
+  HashKnownHosts: 'yes'
+  HostbasedAuthentication: 'no'
+  KbdInteractiveAuthentication: 'no'
+  PasswordAuthentication: 'no'
+  PubkeyAuthentication: 'yes'
+  RekeyLimit: 1G 1h
+  StrictHostKeyChecking: 'yes'
+  Tunnel: 'no'
+
+# Additional client directives and overrides using native SSH syntax.
+openssh_client_options: {}
+
+# Host patterns mapped to client directive dictionaries, before global defaults.
+openssh_client_hosts: {}
+# TOTP destinations require KbdInteractiveAuthentication: 'yes' on the client.
+# openssh_client_hosts:
+#   '*.example.net':
+#     User: deploy
+#     KbdInteractiveAuthentication: 'yes'
+
+# Base server directives, merged with openssh_server_options.
+openssh_server_defaults:
+  AddressFamily: any
+  Port: 22
+  PermitRootLogin: 'no'
+  AuthenticationMethods: publickey
+  PubkeyAuthentication: 'yes'
+  PasswordAuthentication: 'no'
+  KbdInteractiveAuthentication: 'no'
+  PermitEmptyPasswords: 'no'
+  HostbasedAuthentication: 'no'
+  IgnoreRhosts: 'yes'
+  IgnoreUserKnownHosts: 'yes'
+  StrictModes: 'yes'
+  PermitUserEnvironment: 'no'
+  AllowAgentForwarding: 'no'
+  AllowTcpForwarding: 'no'
+  AllowStreamLocalForwarding: 'no'
+  GatewayPorts: 'no'
+  X11Forwarding: 'no'
+  X11UseLocalhost: 'yes'
+  PermitTunnel: 'no'
+  LoginGraceTime: 60
+  MaxAuthTries: 3
+  MaxSessions: 10
+  MaxStartups: 10:30:60
+  ClientAliveInterval: 300
+  ClientAliveCountMax: 1
+  LogLevel: VERBOSE
+  SyslogFacility: AUTHPRIV
+  RekeyLimit: 1G 1h
+  UseDNS: 'no'
+
+# Additional server directives and overrides using native sshd syntax.
+openssh_server_options: {}
+# openssh_server_options:
+#   Port: 2222
+#   AllowGroups: ssh-admins
+
+# Explicit IPv4 or IPv6 listener addresses; an empty list uses native wildcard listeners.
+openssh_listen_addresses: []
+
+# User patterns mapped to Match User directive dictionaries.
+openssh_match_users: {}
+
+# Group patterns mapped to Match Group directive dictionaries.
+openssh_match_groups: {}
+# Optional FIDO2 MFA; the system crypto policy must permit these algorithms.
+# openssh_match_groups:
+#   ssh-fido:
+#     AuthenticationMethods: publickey
+#     PubkeyAcceptedAlgorithms: sk-ssh-ed25519@openssh.com,sk-ecdsa-sha2-nistp256@openssh.com
+#     PubkeyAuthOptions: touch-required verify-required
+#     AuthorizedKeysFile: /etc/ssh/authorized_keys.d/%u
+# Optional TOTP MFA; a separately configured SSH PAM stack and enrollment are required.
+#   ssh-totp:
+#     AuthenticationMethods: publickey,keyboard-interactive:pam
+#     KbdInteractiveAuthentication: 'yes'
+# Optional timeout for idle administrative session channels; not a connection logout.
+#   ssh-admins:
+#     ChannelTimeout: session=15m
+
+# Managed host keys; Ed25519 keys are omitted on hosts running in FIPS mode.
+openssh_host_keys:
+  - type: ed25519
+    path: /etc/ssh/ssh_host_ed25519_key
+  - type: ecdsa
+    size: 384
+    path: /etc/ssh/ssh_host_ecdsa_key
+  - type: rsa
+    size: 4096
+    path: /etc/ssh/ssh_host_rsa_key
+
+# Native keypair regeneration policy; changing key type or size can rotate host identity.
+openssh_host_key_regenerate: partial_idempotence
+
+# Minimum actual DH modulus bit length; existing safe primes are filtered without regeneration.
+openssh_moduli_minimum: 3072
+
+# Central directory containing authorized key files named after their users.
+openssh_authorized_keys_directory: /etc/ssh/authorized_keys.d
+
+# Users and public keys managed through ansible.posix.authorized_key.
+openssh_authorized_keys: []
+
+# Remove unlisted keys from each managed user file unless overridden per item.
+openssh_authorized_keys_exclusive: false
+# Central administration example: set true and supply all keys in one item per account.
+
+# AuthorizedKeysFile paths using native sshd tokens.
+openssh_authorized_keys_files:
+  - .ssh/authorized_keys
+  - /etc/ssh/authorized_keys.d/%u
+# Central-only administration example, after enrollment:
+# openssh_authorized_keys_files:
+#   - /etc/ssh/authorized_keys.d/%u
+
+# Host names mapped to complete public host-key lines in the system known_hosts file.
+openssh_known_hosts: {}
+
+# Trusted hosts mapped to user names for explicitly configured host-based authentication.
+openssh_shosts_equiv: {}

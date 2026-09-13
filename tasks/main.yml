@@ -1,7 +1,98 @@
 ---
-# role: ansible-role-ssh
+# role: openssh
 # file: tasks/main.yml
 
-- name: Import tasks for role ansible-role-ssh
-  import_tasks: tasks.yml
-  when: ssh_enabled | bool
+- name: OPENSSH | Load platform settings
+  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', __openssh_platform_files) }}"
+  vars:
+    __openssh_platform_files:
+      files:
+        - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}-{{ ansible_facts.architecture }}.yml"
+        - "{{ ansible_facts.distribution }}.yml"
+        - "{{ ansible_facts.os_family }}.yml"
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: OPENSSH | Validate configuration ownership
+  ansible.builtin.assert:
+    that:
+      - __openssh_options.keys() | map('lower') | intersect(__openssh_reserved_directives) | length == 0
+    quiet: true
+    fail_msg: Use dedicated role arguments for crypto, host keys, includes and Match or Host blocks.
+  loop: >-
+    {{ [openssh_client_defaults, openssh_client_options, openssh_server_defaults, openssh_server_options]
+       + (openssh_client_hosts.values() | list) }}
+  loop_control:
+    loop_var: __openssh_options
+    label: "{{ __openssh_options.keys() | join(', ') }}"
+
+- name: OPENSSH | Validate Match configuration ownership
+  ansible.builtin.assert:
+    that:
+      - >-
+        __openssh_options.keys() | map('lower')
+        | intersect(__openssh_reserved_directives | difference(['pubkeyacceptedalgorithms', 'authorizedkeysfile'])) | length == 0
+    quiet: true
+    fail_msg: Match blocks may restrict accepted user keys and their sources, but cannot set transport algorithms or includes.
+  loop: "{{ (openssh_match_users.values() | list) + (openssh_match_groups.values() | list) }}"
+  loop_control:
+    loop_var: __openssh_options
+    label: "{{ __openssh_options.keys() | join(', ') }}"
+
+- name: OPENSSH | Validate dedicated algorithm options
+  ansible.builtin.assert:
+    that:
+      - openssh_crypto_options.keys() | difference(__openssh_crypto_directives) | length == 0
+      - openssh_crypto_profile != 'system' or openssh_crypto_options | length == 0
+      - openssh_rsa_minimum >= 3072
+    quiet: true
+    fail_msg: Algorithm overrides require a non-system profile and documented directives; the RSA fallback must be at least 3072 bits.
+
+- name: OPENSSH | Validate central authorized key filenames
+  ansible.builtin.assert:
+    that:
+      - __openssh_account.user is match('^[A-Za-z0-9_.@-]+[$]?$')
+      - __openssh_account.user not in ['.', '..']
+    quiet: true
+  loop: "{{ openssh_authorized_keys }}"
+  loop_control:
+    loop_var: __openssh_account
+    label: "{{ __openssh_account.user }}"
+
+- name: OPENSSH | Install client tools
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    name: "{{ __openssh_client_packages }}"
+    state: present
+
+- name: OPENSSH | Prepare the server
+  ansible.builtin.import_tasks: prepare_server.yml
+
+- name: OPENSSH | Configure the client
+  ansible.builtin.import_tasks: client.yml
+
+- name: OPENSSH | Configure the server
+  ansible.builtin.import_tasks: server.yml
+
+- name: OPENSSH | Apply configuration before setting service state
+  ansible.builtin.meta: flush_handlers
+
+- name: OPENSSH | Enable and start server sockets
+  become: true
+  become_user: root
+  ansible.builtin.systemd_service:
+    name: "{{ __openssh_socket_unit }}"
+    enabled: true
+    state: started
+  loop: "{{ __openssh_socket_units }}"
+  loop_control:
+    loop_var: __openssh_socket_unit
+
+- name: OPENSSH | Enable and start the server
+  become: true
+  become_user: root
+  ansible.builtin.service:
+    name: "{{ __openssh_service }}"
+    enabled: true
+    state: started

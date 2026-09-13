@@ -1,0 +1,9 @@
+# Managed by ansible.
+# file: {{ template_destpath }}
+{% if __openssh_crypto_client %}
+Match final all
+{% endif %}
+RequiredRSASize {{ openssh_rsa_minimum }}
+{% for __openssh_option, __openssh_value in (__openssh_crypto_profiles[openssh_crypto_profile] | combine(openssh_crypto_options)).items() %}
+{{ __openssh_option }} {{ __openssh_value }}
+{% endfor %}

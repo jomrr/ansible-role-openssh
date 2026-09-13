@@ -1,0 +1,88 @@
+---
+# role: openssh
+# file: tasks/client.yml
+
+- name: OPENSSH | Create the client drop-in directory
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ __openssh_client_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: OPENSSH | Bootstrap the local client configuration from the vendor file
+  become: true
+  become_user: root
+  ansible.builtin.copy:
+    src: "{{ __openssh_vendor_client }}"
+    dest: "{{ __openssh_client_config }}"
+    remote_src: true
+    force: false
+    owner: root
+    group: root
+    mode: '0644'
+  when: __openssh_vendor_client | length > 0
+
+- name: OPENSSH | Enable client drop-in configuration
+  become: true
+  become_user: root
+  ansible.builtin.lineinfile:
+    path: "{{ __openssh_client_config }}"
+    line: "Include {{ __openssh_client_directory }}/*.conf"
+    insertbefore: BOF
+    owner: root
+    group: root
+    mode: '0644'
+    backup: "{{ openssh_backup }}"
+    validate: "{{ __openssh_client_validate }}"
+
+- name: OPENSSH | Configure client authentication and host overrides
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: client.conf.j2
+    dest: "{{ __openssh_client_dropin }}"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: "{{ openssh_backup }}"
+    validate: "{{ __openssh_client_validate }}"
+
+- name: OPENSSH | Remove the obsolete client algorithm drop-in
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ __openssh_client_crypto_dropin }}"
+    state: absent
+
+- name: OPENSSH | Configure client RSA and algorithm fallbacks
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: crypto.conf.j2
+    dest: "{{ __openssh_client_crypto_config }}"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: "{{ openssh_backup }}"
+    validate: "{{ __openssh_client_validate }}"
+  vars:
+    __openssh_crypto_client: true
+
+- name: OPENSSH | Include client fallbacks after native configuration
+  become: true
+  become_user: root
+  ansible.builtin.blockinfile:
+    path: "{{ __openssh_client_config }}"
+    marker: '# {mark} OPENSSH ROLE FALLBACKS'
+    insertafter: EOF
+    block: |-
+      Host *
+      Include {{ __openssh_client_crypto_config }}
+    owner: root
+    group: root
+    mode: '0644'
+    backup: "{{ openssh_backup }}"
+    validate: "{{ __openssh_client_validate }}"
