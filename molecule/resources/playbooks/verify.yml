@@ -4,7 +4,7 @@
 
 - name: OPENSSH | Verify functional SSH behavior
   hosts: all
-  gather_facts: true
+  gather_facts: false
   tasks:
     - name: OPENSSH | Verify key authentication with failure diagnostics
       block:

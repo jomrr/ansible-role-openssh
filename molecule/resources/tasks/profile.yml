@@ -7,6 +7,8 @@
     name: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"
   vars:
     openssh_crypto_profile: "{{ __openssh_test_profile }}"
+    openssh_server_options:
+      Port: 22222
 
 - name: OPENSSH | Authenticate using the selected profile
   become: true
@@ -14,6 +16,7 @@
   ansible.builtin.command:
     argv:
       - ssh
+      - -p22222
       - -i
       - /tmp/openssh-molecule-key
       - -oBatchMode=yes
